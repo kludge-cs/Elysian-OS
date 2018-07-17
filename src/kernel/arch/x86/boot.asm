@@ -33,7 +33,11 @@ global _start
 _start:
 	extern _stack_top ;defined in linker script
 	mov esp, _stack_top
-	cli
+	cli ;we can't deal with interrupts yet
+	extern kbegin
+	call kbegin
+	
+	cli ;clear interrupts, again
 .hang:
 	hlt
 	jmp .hang

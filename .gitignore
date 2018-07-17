@@ -1,1 +1,2 @@
-Kernel.bin
+*.bin
+*.o
