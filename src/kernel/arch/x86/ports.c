@@ -30,5 +30,5 @@ void port_out(unsigned short port, unsigned char data)
 		: /* no output */
 		: "d" (port) /* %1 */,
 		  "a" (data) /* %0 */
-	)
+	);
 }

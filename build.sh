@@ -1,18 +1,50 @@
-PLATFORM="x86"
+#!/bin/bash
 
+#Config variables
+PLATFORM="x86"
+CCPLATFORM="i386"
+BINLOC="$HOME/i386elfgcc/bin" #location of compiliation tools
 
 echo "Building kernel for platform $PLATFORM"
 cd src/kernel/
 
-nasm arch/x86/boot.asm -f elf32 -o arch/x86/boot.o
 
-#gcc commands
-~/i386elfgcc/bin/i386-elf-gcc start.c -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -I./libk/include -I./arch/$PLATFORM/include -c -o start.o
+#NASM commands
+nasm arch/$PLATFORM/boot.asm -f elf32 -o arch/$PLATFORM/boot.o
+linkfiles="arch/x86/boot.o"
+
+#GCC commands
+echo "Compiling kernel"
+$BINLOC/$CCPLATFORM-elf-gcc start.c -Wall -O \
+	-fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin \
+	-I./libk/include -I./arch/$PLATFORM/include -c -o start.o
+
+linkfiles="$linkfiles start.o"
+
+
+echo "Compiling libk"
+for file in libk/string/*.c
+do
+	object=${file/".c"/}".o"
+	$BINLOC/$CCPLATFORM-elf-gcc $file -Wall -O \
+		-fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin \
+		-I./libk/include -I./arch/$PLATFORM/include -c -o $object
+	linkfiles="$linkfiles $object"
+done
+
+for file in arch/$PLATFORM/*.c
+do
+	object=${file/".c"/}".o"
+	$BINLOC/$CCPLATFORM-elf-gcc $file -Wall -O \
+			-fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin \
+			-I./libk/include -I./arch/$PLATFORM/include -c -o $object
+	linkfiles="$linkfiles $object"
+done
 
 echo "Linking object files"
-~/i386elfgcc/bin/i386-elf-ld -T arch/x86/link.ld -o kernel.bin arch/x86/boot.o start.o
-mv Kernel.bin ../..
-rm arch/x86/boot.o
-rm start.o
+$BINLOC/$CCPLATFORM-elf-ld -T arch/$PLATFORM/link.ld -o kernel.bin $linkfiles
 
+#Clean up
+mv Kernel.bin ../..
+rm $linkfiles
 echo "Done!"

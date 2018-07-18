@@ -89,28 +89,12 @@ int memcmp( const void * s1, const void * s2, size_t n );
 */
 int strcmp( const char * s1, const char * s2 );
 
-/* Compare the character arrays s1 and s2, interpreted as specified by the
-   LC_COLLATE category of the current locale.
-   Returns 0 if s1 == s2, a negative number if s1 < s2, and a positive number if
-   s1 > s2.
-   TODO: Currently a dummy wrapper for strcmp() as PDCLib does not yet support
-   locales.
-*/
-int strcoll( const char * s1, const char * s2 );
-
 /* Compare no more than the first n characters of the character arrays s1 and
    s2.
    Returns 0 if s1 == s2, a negative number if s1 < s2, and a positive number if
    s1 > s2.
 */
 int strncmp( const char * s1, const char * s2, size_t n );
-
-/* Transform the character array s2 as appropriate for the LC_COLLATE setting of
-   the current locale. If length of resulting string is less than n, store it in
-   the character array pointed to by s1. Return the length of the resulting
-   string.
-*/
-size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, size_t n );
 
 /* Search functions */
 
@@ -173,12 +157,6 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 );
    Returns s.
 */
 void * memset( void * s, int c, size_t n );
-
-/* Map an error number to a (locale-specific) error message string. Error
-   numbers are typically errno values, but any number is mapped to a message.
-   TODO: PDCLib does not yet support locales.
-*/
-char * strerror( int errnum );
 
 /* Returns the length of the string s (excluding terminating '\0').
 */
