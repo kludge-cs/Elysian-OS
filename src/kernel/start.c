@@ -11,7 +11,7 @@ void kbegin(void)
 	screen_init();
 	clear_screen();
 
-	puts("Initilaizing GDT...");
+	puts("Initializing GDT...");
 	install_gdt();
 	
 	while(1); /* Do nothing */
