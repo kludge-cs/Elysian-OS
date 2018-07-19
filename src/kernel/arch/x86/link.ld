@@ -27,6 +27,7 @@ SECTIONS
 		PROVIDE(stack_bottom = .);
 		
 		*(.bss)
+		. += 16384; /* 16KiB stack */
 		
 		PROVIDE(stack_top = .);
 	}

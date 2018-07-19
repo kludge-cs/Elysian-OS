@@ -58,7 +58,3 @@ flush_end:
 	mov gs, ax
 	mov ss, ax
 	ret
-
-section .bss
-align 16
-	resb 16384 ;16 KiB for our stack
