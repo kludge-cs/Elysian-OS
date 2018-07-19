@@ -50,5 +50,4 @@ void install_gdt()
 	/* Flush and update */
 	flush_gdt();
 	puts("Made it past flush_gdt()");
-	asm volatile ("xchgw %bx, %bx");
 }
