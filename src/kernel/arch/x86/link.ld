@@ -22,13 +22,14 @@ SECTIONS
 		*(.data)
 	}
 
-	PROVIDE(stack_bottom = .);
 	.bss : ALIGN(4K)
 	{
+		PROVIDE(stack_bottom = .);
+		
 		*(.bss)
-		. += 16384;
+		
+		PROVIDE(stack_top = .);
 	}
-	PROVIDE(stack_top = .);
 	PROVIDE(stack_size = SIZEOF(.bss));
 	
 	PROVIDE(kernel_end = .);

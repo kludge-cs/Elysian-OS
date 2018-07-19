@@ -23,15 +23,11 @@ mboot_header:
 	dd MBOOT_MAGIC
 	dd MBOOT_FLAGS
 	dd -(MBOOT_MAGIC + MBOOT_FLAGS) ;checksum
-
-section .bss
-align 16
-	resb 16384 ;16 KiB for our stack
-
+	
 section .text
 global _start
 _start:
-	extern stack_top ;defined in linker script
+	extern stack_top
 	mov esp, stack_top
 	cli ;we can't deal with interrupts yet
 	extern kbegin
@@ -62,3 +58,7 @@ flush_end:
 	mov gs, ax
 	mov ss, ax
 	ret
+
+section .bss
+align 16
+	resb 16384 ;16 KiB for our stack
