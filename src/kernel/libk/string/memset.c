@@ -8,14 +8,14 @@
 
 #ifndef REGTEST
 
-void * memset( void * s, int c, size_t n )
+void * memset( void * dest, int val, size_t size )
 {
-    unsigned char * p = (unsigned char *) s;
-    while ( n-- )
+    unsigned char * buf = (unsigned char *) dest;
+    while ( size-- )
     {
-        *p++ = (unsigned char) c;
+        *buf++ = (unsigned char) val;
     }
-    return s;
+    return dest;
 }
 
 void * memsetw(unsigned short * dest, unsigned short val, size_t n )

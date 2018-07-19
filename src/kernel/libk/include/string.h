@@ -156,7 +156,7 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 );
    characters of the memory area pointed to by s.
    Returns s.
 */
-void * memset( void * s, int c, size_t n );
+void * memset( void * dest, int val, size_t size );
 
 void * memsetw(unsigned short * dest, unsigned short val, size_t n );
 

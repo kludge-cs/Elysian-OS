@@ -5,10 +5,10 @@
 
 void kbegin(void)
 {
-	extern char *stack_top, *stack_bottom;
+	extern char *stack_top, *stack_bottom, stack_size;
 
 	/* Clear bss */
-	memset(stack_bottom, 0, stack_top - stack_bottom);
+	memset(stack_bottom, 0, stack_size);
 	/* Init screen */
 	screen_init();
 	clear_screen();

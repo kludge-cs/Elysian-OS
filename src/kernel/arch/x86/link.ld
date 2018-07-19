@@ -29,6 +29,7 @@ SECTIONS
 		. += 16384;
 	}
 	PROVIDE(stack_top = .);
+	PROVIDE(stack_size = SIZEOF(.bss));
 	
 	PROVIDE(kernel_end = .);
 }

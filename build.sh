@@ -42,7 +42,7 @@ do
 done
 
 echo "Linking object files"
-$BINLOC/$CCPLATFORM-elf-ld -T arch/$PLATFORM/link.ld -o kernel.bin $linkfiles
+$BINLOC/$CCPLATFORM-elf-ld -T arch/$PLATFORM/link.ld -o Kernel.bin $linkfiles
 
 #Clean up
 mv Kernel.bin ../..
