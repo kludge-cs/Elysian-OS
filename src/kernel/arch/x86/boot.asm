@@ -1,12 +1,12 @@
 [BITS 32]
 
+MBOOT_MAGIC    equ 0x1BADB002
+MBOOT_ALIGN    equ 1<<0
+MBOOT_MEM_INFO equ 1<<1
+MBOOT_FLAGS    equ MBOOT_ALIGN | MBOOT_MEM_INFO
 
 section .multiboot
 align 4
-	MBOOT_MAGIC    equ 0x1BAD002
-	MBOOT_ALIGN    equ 1<<0
-	MBOOT_MEM_INFO equ 1<<1
-	MBOOT_FLAGS    equ MBOOT_ALIGN | MBOOT_MEM_INFO
 	; Multiboot header format:
 	; +==============+
 	; | Magic Number | 0
@@ -19,7 +19,7 @@ align 4
 	; | depending on |
 	; |   flags set  |
 	; +==============+
-
+mboot_header:
 	dd MBOOT_MAGIC
 	dd MBOOT_FLAGS
 	dd -(MBOOT_MAGIC + MBOOT_FLAGS) ;checksum
@@ -31,13 +31,34 @@ align 16
 section .text
 global _start
 _start:
-	extern _stack_top ;defined in linker script
-	mov esp, _stack_top
+	extern stack_top ;defined in linker script
+	mov esp, stack_top
 	cli ;we can't deal with interrupts yet
 	extern kbegin
 	call kbegin
 	
-	cli ;clear interrupts, again
 .hang:
 	hlt
 	jmp .hang
+
+global flush_gdt
+extern gdt_pointer
+flush_gdt:
+	;Each segment selector has the following structure:
+	; 15              3  2  1   0
+	; +----------------+---+-----+
+	; | Index [13 bit] | T | RPL |
+	; +----------------+---+-----+
+	; Where T is the table indicator, with 0 being GDT and 1 being LDT,
+	; and RPL is the requestor privelage level (ring)
+
+	lgdt [gdt_pointer]
+	jmp dword 0x08:flush_end ;This is weird, but we far jump in order to set CS
+flush_end:
+	mov ax, 0x10 ;0x10 = 10000, so 0000000000010:0:00, being index 2 (data)
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	ret

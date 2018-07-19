@@ -158,6 +158,8 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 );
 */
 void * memset( void * s, int c, size_t n );
 
+void * memsetw(unsigned short * dest, unsigned short val, size_t n );
+
 /* Returns the length of the string s (excluding terminating '\0').
 */
 size_t strlen( const char * s );

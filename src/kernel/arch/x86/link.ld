@@ -4,30 +4,31 @@ ENTRY(_start)
 
 SECTIONS
 {
-	. = 1M; /* Multiboot requires kernels to be placed at 1M or above. */
+	. = 0x00100000; /* Multiboot requires kernels to be placed at 1M or above. */
 
 	.text : ALIGN(4K)
 	{
-		*(.multiboot);
-		*(.text);
+		*(.multiboot)
+		*(.text)
 	}
 	
 	.rodata : ALIGN(4K)
 	{
-		*(.rodata);
+		*(.rodata)
 	}
 
 	.data : ALIGN(4K)
 	{
-		*(.data);
+		*(.data)
 	}
 
+	PROVIDE(stack_bottom = .);
 	.bss : ALIGN(4K)
 	{
-		_stack_bottom = .;
-		*(.bss);
+		*(.bss)
 		. += 16384;
-		_stack_top = .;
 	}
-	kernel_end = .;
+	PROVIDE(stack_top = .);
+	
+	PROVIDE(kernel_end = .);
 }

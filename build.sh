@@ -47,4 +47,10 @@ $BINLOC/$CCPLATFORM-elf-ld -T arch/$PLATFORM/link.ld -o kernel.bin $linkfiles
 #Clean up
 mv Kernel.bin ../..
 rm $linkfiles
+
+#make iso
+cd ../..
+cp -p Kernel.bin iso/boot/
+grub-mkrescue -o OS.iso iso &> /dev/null
+
 echo "Done!"

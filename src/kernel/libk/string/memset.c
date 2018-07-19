@@ -18,6 +18,13 @@ void * memset( void * s, int c, size_t n )
     return s;
 }
 
+void * memsetw(unsigned short * dest, unsigned short val, size_t n )
+{
+	for (; n != 0; n--)
+		*dest++ = val;
+	return dest;
+}
+
 #endif
 
 #ifdef TEST
