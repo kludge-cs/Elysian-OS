@@ -10,12 +10,9 @@ void kbegin(void)
 	/* Init screen */
 	screen_init();
 	clear_screen();
-	
-	install_gdt();
-	/* It doesn't get here but how the fuck */
-	asm volatile ("xchgw %bx, %bx");
 
-	puts("Hello world!  GDT initialized.  Loading...");
+	puts("Initilaizing GDT...");
+	install_gdt();
 	
 	while(1); /* Do nothing */
 }

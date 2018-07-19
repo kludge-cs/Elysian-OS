@@ -25,29 +25,20 @@ void gdt_add(int num, uint64 base, uint64 limit, uint8 access, uint8 granularity
 
 void install_gdt()
 {
-	puts("-- BEGIN GDT SETUP --");
 	gdt_pointer.limit = (sizeof(struct gdt_entry) * 3) - 1;
 	gdt_pointer.base = (uint32)&gdt;
 
 	/* NULL */
 	gdt_add(0, 0, 0, 0, 0);
 	
-	puts("Made it past gdt_add 1");
-
 	/* Let's cover everything, at least for now */
 	/* Code */
 	
 	gdt_add(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-
-	puts("Made it past gdt_add 2");
 	
 	/* Data */
 	gdt_add(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 
-	puts("Made it past gdt_add 3");
-
-
 	/* Flush and update */
 	flush_gdt();
-	puts("Made it past flush_gdt()");
 }
