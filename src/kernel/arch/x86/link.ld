@@ -24,11 +24,10 @@ SECTIONS
 
 	.bss : ALIGN(4K)
 	{
-		PROVIDE(stack_bottom = .);
-		
 		*(.bss)
+		. = ALIGN(16); /* Make sure stack is nicely aligned */
+		PROVIDE(stack_bottom = .);
 		. += 16384; /* 16KiB stack */
-		
 		PROVIDE(stack_top = .);
 	}
 	PROVIDE(stack_size = SIZEOF(.bss));
