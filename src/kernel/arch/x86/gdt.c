@@ -1,6 +1,5 @@
 #include <types.h>
 #include <gdt.h>
-#include <screen.h>
 
 extern void flush_gdt(); //defined in boot.asm
 

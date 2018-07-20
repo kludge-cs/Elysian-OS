@@ -5,6 +5,14 @@ PLATFORM="x86"
 CCPLATFORM="i386"
 BINLOC="$HOME/i386elfgcc/bin" #location of compiliation tools
 
+
+if [ "$1" = "clean" ]
+then
+	rm Kernel.bin OS.iso iso/boot/Kernel.bin out.bochs
+	exit
+fi
+
+
 echo "Building kernel for platform $PLATFORM"
 cd src/kernel/
 
