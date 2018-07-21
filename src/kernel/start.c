@@ -1,8 +1,8 @@
 #include <string.h>
-#include <ports.h>
 #include <screen.h>
-#include <gdt.h>
-#include <idt.h>
+//#include <gdt.h>
+//#include <idt.h>
+#include <arch.h>
 
 void kbegin(void)
 {
@@ -12,11 +12,7 @@ void kbegin(void)
 	screen_init();
 	clear_screen();
 
-	puts("Initializing GDT...");
-	install_gdt();
-
-	puts("Initializing IDT...");
-	install_idt(0x8);
+	arch_init();
 	
 	while(1); /* Do nothing */
 }
