@@ -44,7 +44,7 @@ for file in arch/$PLATFORM/*.c
 do
 	object=${file/".c"/}".o"
 	$BINLOC/$CCPLATFORM-elf-gcc $file -Wall -O \
-			-fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin \
+			-fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -mgeneral-regs-only \
 			-I./libk/include -I./arch/$PLATFORM/include -c -o $object
 	linkfiles="$linkfiles $object"
 done
