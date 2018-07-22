@@ -3,7 +3,7 @@
 #include <string.h>
 #ifdef _DEBUG
 #include <screen.h>
-#include <panic.h>
+//#include <panic.h>
 #endif
 
 void idt_add(uint8 num, uint8 flags, uint16 selector, uint32 *handler)
