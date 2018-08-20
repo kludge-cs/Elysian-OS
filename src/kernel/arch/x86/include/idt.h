@@ -40,7 +40,7 @@ struct idt_entry idt[256];
 struct idt_pointer_struct idt_pointer;
 
 
-void idt_add(uint8 num, uint8 flags, uint16 selector, uint32 *handler);
+void idt_add(uint8 num, uint8 flags, uint16 selector, uint32 offset);
 void install_idt(uint16 selector);
 
 #endif

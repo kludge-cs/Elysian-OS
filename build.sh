@@ -24,6 +24,10 @@ linkfiles="arch/x86/boot.o"
 nasm arch/$PLATFORM/pic.asm -f elf32 -o arch/$PLATFORM/pic.o
 linkfiles="$linkfiles arch/x86/pic.o"
 
+nasm arch/$PLATFORM/idt_handler.asm -f elf32 -o arch/$PLATFORM/idt_handler.o
+linkfiles="$linkfiles arch/x86/idt_handler.o"
+
+
 #GCC commands
 echo "Compiling kernel"
 $BINLOC/$CCPLATFORM-elf-gcc start.c -Wall -O \

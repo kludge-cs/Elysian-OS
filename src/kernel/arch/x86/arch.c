@@ -8,10 +8,16 @@ void arch_init()
 {
 	puts("Initializing GDT...");
 	install_gdt();
+	puts("GDT initialized!");
 
-	puts("Initializing IDT...");
-	install_idt(0x8);
-	pic_init();
+	//puts("Initializing IDT...");
+	//install_idt(0x8);
+	//puts("IDT initialized!");
+
+	//puts("Setting up PIC...");
+	//pic_init();
+	//puts("PIC initialized!");
 	
-	asm volatile ("sti");
+	//asm volatile ("sti");
+	//asm volatile ("int $0");
 }

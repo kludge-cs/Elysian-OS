@@ -6,13 +6,11 @@
 
 void kbegin(void)
 {
-	extern char *stack_top, *stack_bottom, stack_size;
-	
+	extern char *stack_top, *stack_bottom;
 	/* Init screen */
 	screen_init();
 	clear_screen();
 
 	arch_init();
-	
-	while(1); /* Do nothing */
+	while (1);
 }

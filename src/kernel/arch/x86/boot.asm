@@ -27,12 +27,10 @@ mboot_header:
 section .text
 global _start
 _start:
-	extern stack_top
 	mov esp, stack_top
 	cli ;we can't deal with interrupts yet
 	extern kbegin
 	call kbegin
-	
 .hang:
 	hlt
 	jmp .hang
@@ -58,3 +56,11 @@ flush_end:
 	mov gs, ax
 	mov ss, ax
 	ret
+
+section .bss
+global stack_top
+global stack_bottom
+align 16
+	stack_top:
+	resb 16384 ;16 KiB for our stack
+	stack_bottom:
