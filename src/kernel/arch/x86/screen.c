@@ -4,6 +4,10 @@
 
 unsigned short *output_pointer;
 
+extern void blink_on();
+extern void blink_off();
+extern void blink_toggle();
+
 
 void puts(char *text)
 {
@@ -117,4 +121,5 @@ void screen_init(void)
 {
 	attrib = 0x8F;
 	output_pointer = (unsigned short *)0xB8000;
+	blink_off();
 }

@@ -12,5 +12,5 @@ void kbegin(void)
 	clear_screen();
 
 	arch_init();
-	while (1);
+	while (1);;
 }

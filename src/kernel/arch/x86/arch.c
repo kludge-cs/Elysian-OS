@@ -10,14 +10,13 @@ void arch_init()
 	install_gdt();
 	puts("GDT initialized!");
 
-	//puts("Initializing IDT...");
-	//install_idt(0x8);
-	//puts("IDT initialized!");
+	puts("Initializing IDT...");
+	install_idt(0x8);
+	puts("IDT initialized!");
 
-	//puts("Setting up PIC...");
-	//pic_init();
-	//puts("PIC initialized!");
+	puts("Setting up PIC...");
+	pic_init();
+	puts("PIC initialized!");
 	
-	//asm volatile ("sti");
-	//asm volatile ("int $0");
+	asm volatile ("sti");
 }

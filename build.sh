@@ -12,20 +12,22 @@ then
 	exit
 fi
 
+asm()
+{
+	nasm $1.asm -f elf32 -o $1.o
+	linkfiles="$linkfiles $1.o"
+}
+
 
 echo "Building kernel for platform $PLATFORM"
 cd src/kernel/
 
 
 #NASM commands
-nasm arch/$PLATFORM/boot.asm -f elf32 -o arch/$PLATFORM/boot.o
-linkfiles="arch/x86/boot.o"
-
-nasm arch/$PLATFORM/pic.asm -f elf32 -o arch/$PLATFORM/pic.o
-linkfiles="$linkfiles arch/x86/pic.o"
-
-nasm arch/$PLATFORM/idt_handler.asm -f elf32 -o arch/$PLATFORM/idt_handler.o
-linkfiles="$linkfiles arch/x86/idt_handler.o"
+asm arch/$PLATFORM/boot
+asm arch/$PLATFORM/pic
+asm arch/$PLATFORM/idt_handler
+asm arch/$PLATFORM/blink
 
 
 #GCC commands

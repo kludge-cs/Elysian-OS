@@ -23,11 +23,9 @@ void install_idt(uint16 selector)
 	int i;
 	idt_pointer.limit = (sizeof(struct idt_entry) * 256) - 1;
 	idt_pointer.base = (uint32)&idt;
-
-	memset(&idt, 0, sizeof(struct idt_entry) * 256);
 	
-	//for (i = 0; i < 256; i++)
-	//	idt_add(i, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, &default_handler);
+	for (i = 0; i < 256; i++)
+		idt_add(i, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &default_handler);
 
 	/* Load */
 	asm volatile ("lidt %0" :: "m"(idt_pointer));
