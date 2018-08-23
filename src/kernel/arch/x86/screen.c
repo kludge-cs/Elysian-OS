@@ -2,6 +2,7 @@
 #include <screen.h>
 #include <ports.h>
 
+static int attrib;
 unsigned short *output_pointer;
 
 extern void blink_on();

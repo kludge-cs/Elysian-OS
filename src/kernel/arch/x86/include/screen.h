@@ -4,7 +4,6 @@
 #define index(X, Y) ((Y * 80) + X)
 #define setattr(chr, attr) (chr | (attr << 8))
 
-int attrib;
 unsigned int pos_x;
 unsigned int pos_y;
 

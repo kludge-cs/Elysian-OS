@@ -1,6 +1,7 @@
 #include <screen.h>
 #include <gdt.h>
 #include <idt.h>
+#include <pic_c.h>
 
 extern void pic_init();
 
