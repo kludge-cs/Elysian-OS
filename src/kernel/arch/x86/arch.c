@@ -2,6 +2,7 @@
 #include <gdt.h>
 #include <idt.h>
 #include <pic_c.h>
+#include <time.h>
 
 
 void arch_init()
@@ -17,6 +18,10 @@ void arch_init()
 	puts("Setting up PIC...");
 	irq_install(0x08);
 	puts("PIC initialized!");
-	
+
 	asm volatile ("sti");
+
+	puts("Setting up PIT...");
+	timer_install(100);
+	puts("PIT initialized!");
 }
