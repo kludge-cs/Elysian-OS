@@ -14,9 +14,9 @@ void arch_init()
 	install_idt(0x08);
 	puts("IDT initialized!");
 
-	//puts("Setting up PIC...");
-	//pic_init();
-	//puts("PIC initialized!");
+	puts("Setting up PIC...");
+	pic_init();
+	puts("PIC initialized!");
 	
-	//asm volatile ("sti");
+	asm volatile ("sti");
 }

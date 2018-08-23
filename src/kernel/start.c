@@ -9,6 +9,5 @@ void kbegin(void)
 	clear_screen();
 
 	arch_init();
-	asm volatile ("int $0"); //generate an interrupt
 	while (1);
 }
