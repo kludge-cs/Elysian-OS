@@ -24,4 +24,6 @@ void arch_init()
 	puts("Setting up PIT...");
 	timer_install(100);
 	puts("PIT initialized!");
+
+	asm volatile("int $32");
 }

@@ -12,7 +12,7 @@ IRQ_8 equ 40 ;8 IRQs per PIC
 irq%1:
 	cli
 	push byte %1
-	push byte (%1+15)
+	push byte (%1+32)
 	jmp irq_common
 %endmacro
 
@@ -35,6 +35,23 @@ global irq12
 global irq13
 global irq14
 global irq15
+
+irq_macro 0
+irq_macro 1
+irq_macro 2
+irq_macro 3
+irq_macro 4
+irq_macro 5
+irq_macro 6
+irq_macro 7
+irq_macro 8
+irq_macro 9
+irq_macro 10
+irq_macro 11
+irq_macro 12
+irq_macro 13
+irq_macro 14
+irq_macro 15
 
 ;I have to do this shit all over again... I could make it a function that changes the call based on a stack argument or something, or at least a macro, but eh
 irq_common:
@@ -133,20 +150,3 @@ pic_init:
 	out PIC2_DATA, al
 
 	ret ;This is still a function...
-
-irq_macro 0
-irq_macro 1
-irq_macro 2
-irq_macro 3
-irq_macro 4
-irq_macro 5
-irq_macro 6
-irq_macro 7
-irq_macro 8
-irq_macro 9
-irq_macro 10
-irq_macro 11
-irq_macro 12
-irq_macro 13
-irq_macro 14
-irq_macro 15

@@ -54,13 +54,12 @@ irq_handler_main
 	inum = (uint8) regs->int_num;
 	handler = irq_routines[inum - 32];
 	
-	puts("IRQ Hit");
-	
 	if (handler)
 		handler(regs);
 
 	if (inum >= 40)
 		port_out(0xA0, 0x20); //send EOI to slave
+	
 	port_out(0x20, 0x20); //send EOI to master
 }
 
@@ -68,7 +67,7 @@ void irq_install(uint16 selector)
 {
 	pic_init();
 	
-	//idt_add(uint8 num, uint8 flags, uint16 selector, uint32 offset);
+	/*   idt_add(uint8 num, uint8 flags, uint16 selector, uint32 offset);   */
 	idt_add(32, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq0);
 	idt_add(33, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq1);
 	idt_add(34, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq2);

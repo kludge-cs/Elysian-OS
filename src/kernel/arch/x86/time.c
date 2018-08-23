@@ -4,7 +4,7 @@
 #include <pic_c.h>
 #include <screen.h>
 
-uint32 _ticks;
+volatile uint32 _ticks;
 uint32 _freq;
 
 /* Command register:
@@ -56,5 +56,6 @@ void delay(uint32 amount)
 {
 	uint32 eticks;
 	eticks = amount + _ticks;
-	while(_ticks < eticks);
+	while(_ticks < eticks)
+		asm volatile ("sti//hlt//cli");
 }
