@@ -6,6 +6,7 @@
 #include <idt.h>
 
 
+
 void irq_remove(int irq);
 
 extern void irq0();
@@ -28,7 +29,7 @@ extern void irq15();
 extern void pic_init();
 
 /* Array of func pointers */
-void *irq_routines[16] =
+static void *irq_routines[16] =
 {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0
@@ -51,16 +52,15 @@ irq_handler_main
 	void (*handler)(struct regs_struct *regs);
 	uint8 inum;
 	inum = (uint8) regs->int_num;
-
-	if (inum >= 40)
-	{
-		puts("IRQ: # >= 40");
-		port_out(0xA0, 0x20); //send EOI to slave
-	}
-	
 	handler = irq_routines[inum - 32];
+	
+	puts("IRQ Hit");
+	
 	if (handler)
 		handler(regs);
+
+	if (inum >= 40)
+		port_out(0xA0, 0x20); //send EOI to slave
 	port_out(0x20, 0x20); //send EOI to master
 }
 

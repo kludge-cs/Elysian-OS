@@ -27,7 +27,7 @@ uint32 _freq;
 		0 - 1x 16 bit counter
 		1 - 4x BCD counters
 
-	00_11_011_0 - Counter 0, LSB then MSB, Rate generator, 1x 16 bit counter
+	00_11_011_0 - Counter 0, LSB then MSB, Square wave generator, 1x 16 bit counter
 */
 
 void set_interval(uint32 hz)
