@@ -4,7 +4,8 @@
 #include <pic_c.h>
 #include <screen.h>
 
-uint32 timer_freq;
+uint32 _ticks;
+uint32 _freq;
 
 /* Command register:
 	+-----------+-----------+------+-----+
@@ -31,7 +32,7 @@ uint32 timer_freq;
 
 void set_interval(uint32 hz)
 {
-	timer_freq = hz;
+	_freq = hz;
 	uint32 num = (uint32)1193180 / hz;
 	port_out(0x43, 0b00110110); /* Set command register */
 	port_out(0x40, num & 0xFF);    /* Set low byte */
@@ -40,8 +41,8 @@ void set_interval(uint32 hz)
 
 void timer_handler(struct regs_struct *regs)
 {
-	ticks++;
-	if (ticks % timer_freq == 0)
+	_ticks++;
+	if (_ticks % _freq == 0)
 		puts("Tick");
 }
 
@@ -49,4 +50,11 @@ void timer_install(uint32 hz)
 {
 	set_interval(hz);
 	irq_add(0, timer_handler);
+}
+
+void delay(uint32 amount)
+{
+	uint32 eticks;
+	eticks = amount + _ticks;
+	while(_ticks < eticks);
 }
