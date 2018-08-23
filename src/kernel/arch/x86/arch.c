@@ -6,7 +6,6 @@ extern void pic_init();
 
 void arch_init()
 {
-	asm volatile ("xchgw %bx, %bx"); // so we can turn on tracing when we need
 	puts("Initializing GDT...");
 	install_gdt();
 	puts("GDT initialized!");
