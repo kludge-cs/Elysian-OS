@@ -3,7 +3,6 @@
 #include <idt.h>
 #include <pic_c.h>
 
-extern void pic_init();
 
 void arch_init()
 {
@@ -16,7 +15,7 @@ void arch_init()
 	puts("IDT initialized!");
 
 	puts("Setting up PIC...");
-	pic_init();
+	irq_install(0x08);
 	puts("PIC initialized!");
 	
 	asm volatile ("sti");

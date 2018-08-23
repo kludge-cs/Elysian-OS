@@ -3,6 +3,7 @@
 #include <string.h>
 #include <types.h>
 #include <ports.h>
+#include <idt.h>
 
 
 void irq_remove(int irq);
@@ -43,7 +44,9 @@ void irq_remove(int irq)
 	irq_routines[irq] = 0;
 }
 
-void __attribute__((__cdecl__)) irq_handler_main(struct regs_struct *regs)
+void __attribute__((__cdecl__))
+irq_handler_main
+(struct regs_struct *regs)
 {
 	void (*handler)(struct regs_struct *regs);
 	uint8 inum;
@@ -59,4 +62,27 @@ void __attribute__((__cdecl__)) irq_handler_main(struct regs_struct *regs)
 	if (handler)
 		handler(regs);
 	port_out(0x20, 0x20); //send EOI to master
+}
+
+void irq_install(uint16 selector)
+{
+	pic_init();
+	
+	//idt_add(uint8 num, uint8 flags, uint16 selector, uint32 offset);
+	idt_add(32, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq0);
+	idt_add(33, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq1);
+	idt_add(34, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq2);
+	idt_add(35, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq3);
+	idt_add(36, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq4);
+	idt_add(37, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq5);
+	idt_add(38, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq6);
+	idt_add(39, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq7);
+	idt_add(40, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq8);
+	idt_add(41, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq9);
+	idt_add(42, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq10);
+	idt_add(43, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq11);
+	idt_add(44, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq12);
+	idt_add(45, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq13);
+	idt_add(46, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq14);
+	idt_add(47, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) irq15);
 }
