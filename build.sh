@@ -26,7 +26,7 @@ cd src/kernel/
 #NASM commands
 asm arch/$PLATFORM/boot
 asm arch/$PLATFORM/pic
-asm arch/$PLATFORM/idt_handler
+asm arch/$PLATFORM/idt_helper
 asm arch/$PLATFORM/blink
 
 

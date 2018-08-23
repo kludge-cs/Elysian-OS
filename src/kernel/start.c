@@ -1,7 +1,4 @@
-#include <string.h>
 #include <screen.h>
-//#include <gdt.h>
-//#include <idt.h>
 #include <arch.h>
 
 void kbegin(void)
@@ -12,5 +9,6 @@ void kbegin(void)
 	clear_screen();
 
 	arch_init();
-	while (1);;
+	asm volatile ("int $0"); //generate an interrupt
+	while (1);
 }
