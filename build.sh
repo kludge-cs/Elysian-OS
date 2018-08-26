@@ -40,7 +40,7 @@ linkfiles="$linkfiles start.o"
 
 
 echo "Compiling libk"
-for file in libk/string/*.c
+for file in libk/*.c
 do
 	object=${file/".c"/}".o"
 	$BINLOC/$CCPLATFORM-elf-gcc $file -Wall -O \

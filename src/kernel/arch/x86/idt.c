@@ -1,6 +1,6 @@
 #include <types.h>
 #include <idt.h>
-#include <string.h>
+#include <util.h>
 #include <screen.h>
 
 #ifdef _DEBUG
