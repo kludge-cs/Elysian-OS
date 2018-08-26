@@ -3,10 +3,16 @@
 #include <idt.h>
 #include <pic_c.h>
 #include <time.h>
+#include <util.h>
 
 
 void arch_init()
 {
+	
+	/* Init screen */
+	screen_init();
+	clear_screen();
+
 	puts("Initializing GDT...");
 	install_gdt();
 	puts("GDT initialized!");

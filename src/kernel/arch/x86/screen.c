@@ -10,13 +10,6 @@ extern void blink_off();
 extern void blink_toggle();
 
 
-void puts(char *text)
-{
-	while(*text)
-		putch(*text++);
-	putch('\n');
-}
-
 void putch(char chr)
 {
 	unsigned short *loc;

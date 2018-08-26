@@ -8,8 +8,8 @@ BINLOC="$HOME/i386elfgcc/bin" #location of compiliation tools
 
 if [ "$1" = "clean" ]
 then
-	rm Kernel.bin OS.iso iso/boot/Kernel.bin out.bochs
-	exit
+	rm Kernel.bin OS.iso iso/boot/Kernel.bin out.bochs &> /dev/null
+	exit 0
 fi
 
 asm()

@@ -1,4 +1,5 @@
 #include <types.h>
+#include <screen.h>
 
 void * memcpy( void * s1, const void * s2, int64 n )
 {
@@ -26,4 +27,11 @@ void * memsetw(uint16 * dest, uint16 val, int64 n )
 	for (; n != 0; n--)
 		*dest++ = val;
 	return dest;
+}
+
+void puts(char *text)
+{
+	while(*text)
+		putch(*text++);
+	putch('\n');
 }

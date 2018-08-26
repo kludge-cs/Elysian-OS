@@ -7,7 +7,6 @@
 unsigned int pos_x;
 unsigned int pos_y;
 
-void puts (char *text);
 void putch (char chr);
 void clear_screen (void);
 void update_curs (void);
