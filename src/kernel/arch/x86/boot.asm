@@ -3,7 +3,12 @@
 MBOOT_MAGIC    equ 0x1BADB002
 MBOOT_ALIGN    equ 1<<0
 MBOOT_MEM_INFO equ 1<<1
-MBOOT_FLAGS    equ MBOOT_ALIGN | MBOOT_MEM_INFO
+MBOOT_VID_MODE equ 1<<2
+MBOOT_FLAGS    equ MBOOT_ALIGN | MBOOT_MEM_INFO | MBOOT_VID_MODE
+
+VIDEO_USE_TEXT equ 1
+VIDEO_HEIGHT   equ 115 ;chars
+VIDEO_WIDTH    equ 58
 
 section .multiboot
 align 4
@@ -23,6 +28,11 @@ mboot_header:
 	dd MBOOT_MAGIC
 	dd MBOOT_FLAGS
 	dd -(MBOOT_MAGIC + MBOOT_FLAGS) ;checksum
+	dd 0, 0, 0, 0, 0 ;header_addr, load_addr, load_end_addr, bss_end_addr, entry_addr
+	dd VIDEO_USE_TEXT
+	dd VIDEO_HEIGHT
+	dd VIDEO_WIDTH
+	dd 32 ;color depth, ignored in text mode
 	
 section .text
 global _start
@@ -31,6 +41,8 @@ extern stack_top ;defined in linker script
 _start:
 	mov esp, stack_top ;load stack before doing anything
 	cli ;we can't deal with interrupts yet
+	push ebx ;multiboot info structure
+	push eax ;multiboot magic num
 	call kbegin
 	cli
 .hang:

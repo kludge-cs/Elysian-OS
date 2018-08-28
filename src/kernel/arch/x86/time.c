@@ -42,8 +42,6 @@ void set_interval(uint32 hz)
 void timer_handler(struct regs_struct *regs)
 {
 	_ticks++;
-	if (_ticks % _freq == 0)
-		puts("Tick");
 }
 
 void timer_install(uint32 hz)

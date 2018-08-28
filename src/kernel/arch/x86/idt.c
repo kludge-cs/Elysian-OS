@@ -163,7 +163,6 @@ void __attribute__((__cdecl__)) int_handler(struct regs_struct *regs)
 {
 	if (regs->int_num > 31)
 	{
-		clear_screen();
 		puts("===============================================================");
 		puts("                        KERNEL PANIC!                          ");
 		puts("===============================================================");

@@ -105,10 +105,10 @@ void update_scroll (void)
 	}
 }
 
-void set_color(unsigned char fg, unsigned char bg)
+void set_color(enum color fg, enum color bg)
 {
 	/* Top 4 bytes is bg, bottom 4 is fg */
-	attrib = (bg << 4) | (fg & 0x0F);
+	attrib = ((uint8)bg << 4) | ((uint8)fg & 0x0F);
 }
 
 void screen_init(void)
