@@ -55,7 +55,7 @@ global mboot_info_struct
 multiboot_magic_check: dd 0
 multiboot_info: resb 115
 boot_page_dir:
-	;lower hals
+	;lower half
 	dd (PD_PRESENT | PD_SIZE) ;rodata, text
 	dd (PD_PRESENT | PD_READWRITE | PD_SIZE) ;data, bss
 
@@ -125,7 +125,7 @@ flush_end:
 	mov ss, ax
 	ret
 
-section .bss:
+section .bss
 global stack_bottom
 global stack_top
 align 0x1000

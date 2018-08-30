@@ -17,7 +17,7 @@ irq%1:
 %endmacro
 
 
-section .text:
+section .text
 extern irq_handler_main
 global irq0
 global irq1

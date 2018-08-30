@@ -6,9 +6,13 @@ SECTIONS
 {
 	. = 0xC0100000;
 
-	.text ALIGN(4K) : AT(ADDR(.text) - 0xC0000000)
+	.multiboot : AT(ADDR(.multiboot) - 0xC0000000)
 	{
 		*(.multiboot)
+	}
+	
+	.text ALIGN(4K) : AT(ADDR(.text) - 0xC0000000)
+	{
 		*(.text)
 	}
 	
@@ -27,6 +31,7 @@ SECTIONS
 	.bss ALIGN(4K) : AT(ADDR(.bss) - 0xC0400000)
 	{
 		*(.bss)
+		*(.bss:)
 	}
 	
 	PROVIDE(kernel_end = .);
