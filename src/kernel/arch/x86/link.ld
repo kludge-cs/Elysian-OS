@@ -4,31 +4,29 @@ ENTRY(_start)
 
 SECTIONS
 {
-	. = 0x00100000; /* Multiboot requires kernels to be placed at 1M or above. */
+	. = 0xC0100000;
 
-	.text : ALIGN(4K)
+	.text ALIGN(4K) : AT(ADDR(.text) - 0xC0000000)
 	{
 		*(.multiboot)
 		*(.text)
 	}
 	
-	.rodata : ALIGN(4K)
+	.rodata ALIGN(4K) : AT(ADDR(.rodata) - 0xC0000000)
 	{
 		*(.rodata)
 	}
 
-	.data : ALIGN(4K)
+	. = 0xC0400000; /* data and bss are in an RW page together */
+	
+	.data ALIGN(4K) : AT(ADDR(.data) - 0xC0400000)
 	{
 		*(.data)
 	}
 
-	.bss : ALIGN(4K)
+	.bss ALIGN(4K) : AT(ADDR(.bss) - 0xC0400000)
 	{
 		*(.bss)
-		. = ALIGN(16); /* Make sure stack is nicely aligned */
-		PROVIDE(stack_bottom = .);
-		. += 16384; /* 16KiB stack */
-		PROVIDE(stack_top = .);
 	}
 	
 	PROVIDE(kernel_end = .);

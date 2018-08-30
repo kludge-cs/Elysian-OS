@@ -59,7 +59,7 @@ do
 done
 
 echo "Linking object files"
-$BINLOC/$CCPLATFORM-elf-ld -T arch/$PLATFORM/link.ld -o Kernel.bin $linkfiles
+$BINLOC/$CCPLATFORM-elf-ld -T arch/$PLATFORM/link.ld -o Kernel.bin $linkfiles -z max-page-size=4096
 
 #Clean up
 mv Kernel.bin ../..

@@ -10,6 +10,20 @@ VIDEO_USE_TEXT equ 1
 VIDEO_HEIGHT   equ 115 ;chars
 VIDEO_WIDTH    equ 58
 
+KERNEL_RO_VIRT_BASE equ 0xC0000000 ;rodata, text
+KERNEL_RW_VIRT_BASE equ 0xC0400000 ;data, bss
+
+KERNEL_PD_INDEX  equ KERNEL_RO_VIRT_BASE >> 22
+
+PD_PRESENT      equ 0000001b
+PD_READWRITE    equ 0000010b ;Read & Write
+PD_USER         equ 0000100b ;if not set, only supervisor can access
+PD_WRITETHROUGH equ 0001000b ;writethrough if enabled, writeback if not
+PD_NOCACHE      equ 0010000b ;disable caching if set
+PD_ACCESSED     equ 0100000b ;should set set if page has been accessed
+PD_SIZE         equ 1000000b ;4kib vs 4mib
+
+
 section .multiboot
 align 4
 	; Multiboot header format:
@@ -33,16 +47,56 @@ mboot_header:
 	dd VIDEO_HEIGHT
 	dd VIDEO_WIDTH
 	dd 32 ;color depth, ignored in text mode
-	
+
+section .data
+align 0x1000
+global mboot_magic_check
+global mboot_info_struct
+multiboot_magic_check: dd 0
+multiboot_info: resb 115
+boot_page_dir:
+	;lower hals
+	dd (PD_PRESENT | PD_SIZE) ;rodata, text
+	dd (PD_PRESENT | PD_READWRITE | PD_SIZE) ;data, bss
+
+	;make blank pages for everything in the middle
+	times (KERNEL_PD_INDEX - 2) dd 0
+
+	;higher half
+	dd (PD_PRESENT | PD_SIZE)
+	dd (PD_PRESENT | PD_READWRITE | PD_SIZE)
+
+	times (1024 - KERNEL_PD_INDEX - 2) dd 0 ;fill rest of dir
+
 section .text
 global _start
 extern kbegin
-extern stack_top ;defined in linker script
 _start:
-	mov esp, stack_top ;load stack before doing anything
-	cli ;we can't deal with interrupts yet
-	push ebx ;multiboot info structure
-	push eax ;multiboot magic num
+	mov [multiboot_magic_check], eax
+	;mov [multiboot_info_struct], [ebx]
+	mov eax, (boot_page_dir - KERNEL_RW_VIRT_BASE)
+	mov cr3, eax
+
+	mov eax, cr4
+	or eax, 0x10 ;enable PSE (4MiB pages)
+	mov cr4, eax
+
+	mov eax, cr0
+	or eax, 0x80010001 ;enable paging, WP, PE
+	mov cr0, eax
+
+	lea eax, [higher_half_start]
+	jmp eax
+
+higher_half_start:
+	;now in higher half
+	mov dword [boot_page_dir], 0 ;zero out first entry of page dir
+	invlpg [0] ;get rid of it
+	;boom, done
+
+	mov esp, stack_top ;set up stack
+	cli ;we can't do interrupts yet
+
 	call kbegin
 	cli
 .hang:
@@ -70,3 +124,11 @@ flush_end:
 	mov gs, ax
 	mov ss, ax
 	ret
+
+section .bss:
+global stack_bottom
+global stack_top
+align 0x1000
+stack_bottom:
+	resb 0x4000 ;16KiB stack
+stack_top:

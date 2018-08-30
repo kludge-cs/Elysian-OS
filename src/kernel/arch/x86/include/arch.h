@@ -2,6 +2,6 @@
 #define _ARCH_H
 #include <types.h>
 
-int arch_init(uint32 multiboot_magic, uint32 multiboot_header);
+int arch_init();
 
 #endif

@@ -60,21 +60,21 @@ struct multiboot_info_struct
 } __attribute__((packed));
 
 
-int arch_init(uint32 multiboot_magic, uint32 multiboot_addr)
+int arch_init()
 {
-	struct multiboot_info_struct *multiboot_info;
-	
+	/*
+	extern int *multiboot_magic_check;
+	//extern struct multiboot_info_struct multiboot_info;
+	*/
 	/* Init screen */
 	screen_init();
 	clear_screen();
 
-	if (multiboot_magic != 0x2BADB002)
+	/*if (multiboot_magic_check != 0x2BADB002)
 	{
 		puts("Invalid multiboot magic!");
 		return -1;
-	}
-
-	multiboot_info = (struct multiboot_info_struct *) multiboot_addr;
+	}*/
 
 	puts("Initializing GDT...");
 	install_gdt();
