@@ -10,10 +10,9 @@ VIDEO_USE_TEXT equ 1
 VIDEO_HEIGHT   equ 115 ;chars
 VIDEO_WIDTH    equ 58
 
-KERNEL_RO_VIRT_BASE equ 0xC0000000 ;rodata, text
-KERNEL_RW_VIRT_BASE equ 0xC0400000 ;data, bss
+KERNEL_VIRT_BASE equ 0xC0000000 ;rodata, text
 
-KERNEL_PD_INDEX  equ KERNEL_RO_VIRT_BASE >> 22
+KERNEL_PD_INDEX  equ KERNEL_VIRT_BASE >> 22
 
 PD_PRESENT      equ 0000001b
 PD_READWRITE    equ 0000010b ;Read & Write
@@ -55,26 +54,117 @@ global mboot_info_struct
 multiboot_magic_check: dd 0
 multiboot_info: resb 115
 boot_page_dir:
-	;lower half
-	dd (PD_PRESENT | PD_SIZE) ;rodata, text
-	dd (PD_PRESENT | PD_READWRITE | PD_SIZE) ;data, bss
-
-	;make blank pages for everything in the middle
-	times (KERNEL_PD_INDEX - 2) dd 0
-
-	;higher half
-	dd (PD_PRESENT | PD_SIZE)
-	dd (PD_PRESENT | PD_READWRITE | PD_SIZE)
-
-	times (1024 - KERNEL_PD_INDEX - 2) dd 0 ;fill rest of dir
+	resd 1024
 
 section .text
 global _start
 extern kbegin
+extern rw_end
+extern ro_end
 _start:
-	mov [multiboot_magic_check], eax
+	;TODO: move multiboot stuff
+	;mov [multiboot_magic_check], eax
 	;mov [multiboot_info_struct], [ebx]
-	mov eax, (boot_page_dir - KERNEL_RW_VIRT_BASE)
+	
+	;i = 0
+	;while (i != ro_end >> 22)
+	;do
+	;	move (PD_PRESENT) to [boot_page_dir + i]
+	;	i++
+	;end
+	;
+	;move i to j
+	;
+	;while (i != rw_end >> 22)
+	;do
+	;	move (PD_PRESENT | PD_SIZE) to [boot_page_dir + i]
+	;	i++
+	;end
+	;
+	;move i to k
+	;
+	;while (i != VIRT_BASE >> 22)
+	;do
+	;	move 0 to [boot_page_dir + i]
+	;	i++
+	;end
+	;
+	;while (i != (VIRT_BASE >> 22) + j)
+	;	move (PD_PRESENT) to [boot_page_dir + i]
+	;	i++
+	;end
+	;
+	;while (i != (VIRT_BASE >> 22) + k)
+	;	move (PD_PRESENT) to [boot_page_dir + i]
+	;	i++
+	;end
+	;
+	;loop i -> 1024
+	;	move 0 to [boot_page_dir + i]
+	;end
+.loop_1_init:
+	xor eax, eax
+	mov ebx, ro_end
+	shr ebx, 22
+.loop_1:
+	cmp eax, ebx
+	je .loop_2_init - KERNEL_VIRT_BASE
+	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT)
+	inc eax
+	jmp .loop_1 - KERNEL_VIRT_BASE
+
+.loop_2_init:
+	mov eax, ecx ;i->j
+	mov ebx, rw_end
+	shr ebx, 22
+.loop_2:
+	cmp eax, ebx
+	je .loop_3_init - KERNEL_VIRT_BASE
+	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_SIZE)
+	inc eax
+	jmp .loop_2 - KERNEL_VIRT_BASE
+
+.loop_3_init:
+	mov edx, eax ;i->k
+	mov ebx, KERNEL_VIRT_BASE
+	shr ebx, 22
+.loop_3:
+	cmp eax, ebx
+	je .loop_4_init - KERNEL_VIRT_BASE
+	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], 0
+	inc eax
+	jmp .loop_3 - KERNEL_VIRT_BASE
+
+.loop_4_init:
+	add ebx, ecx
+.loop_4:
+	cmp eax, ebx
+	je .loop_5_init - KERNEL_VIRT_BASE
+	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT)
+	inc eax
+	jmp .loop_4 - KERNEL_VIRT_BASE
+
+.loop_5_init:
+	sub ebx, ecx ;VIRT_BASE - j
+	add ebx, edx ;VIRT_BASE + k
+.loop_5:
+	cmp eax, ebx
+	je .loop_6_init - KERNEL_VIRT_BASE
+	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_SIZE)
+	inc eax
+	jmp .loop_5 - KERNEL_VIRT_BASE
+
+.loop_6_init:
+	mov ebx, 1024
+.loop_6:
+	cmp eax, ebx
+	je .loop_done - KERNEL_VIRT_BASE
+	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], 0
+	jmp .loop_6 - KERNEL_VIRT_BASE
+
+.loop_done:
+	xchg bx, bx ;bochs breakpoint
+	mov eax, (boot_page_dir - KERNEL_VIRT_BASE)
 	mov cr3, eax
 
 	mov eax, cr4
@@ -89,6 +179,7 @@ _start:
 	jmp eax
 
 higher_half_start:
+	xchg bx, bx ;bochs breakpoint
 	;now in higher half
 	mov dword [boot_page_dir], 0 ;zero out first entry of page dir
 	invlpg [0] ;get rid of it
