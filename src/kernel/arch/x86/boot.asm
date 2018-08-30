@@ -102,65 +102,60 @@ _start:
 	;loop i -> 1024
 	;	move 0 to [boot_page_dir + i]
 	;end
-.loop_1_init:
+
+;loop_1_init:
 	xor eax, eax
 	mov ebx, ro_end
 	shr ebx, 22
 .loop_1:
 	cmp eax, ebx
-	je short .loop_2_init
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT)
 	inc eax
-	jmp short .loop_1
+	jne short .loop_1
 
-.loop_2_init:
+;loop_2_init:
 	mov eax, ecx ;i->j
 	mov ebx, rw_end
 	shr ebx, 22
 .loop_2:
 	cmp eax, ebx
-	je short .loop_3_init
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_SIZE)
 	inc eax
-	jmp short .loop_2
+	jne short .loop_2
 
-.loop_3_init:
+;loop_3_init:
 	mov edx, eax ;i->k
 	mov ebx, KERNEL_VIRT_BASE
 	shr ebx, 22
 .loop_3:
 	cmp eax, ebx
-	je short .loop_4_init
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], 0
 	inc eax
-	jmp short .loop_3
+	jne short .loop_3
 
-.loop_4_init:
+;loop_4_init:
 	add ebx, ecx
 .loop_4:
 	cmp eax, ebx
-	je short .loop_5_init
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT)
 	inc eax
-	jmp short .loop_4
+	jne short .loop_4
 
-.loop_5_init:
+;loop_5_init:
 	sub ebx, ecx ;VIRT_BASE - j
 	add ebx, edx ;VIRT_BASE + k
 .loop_5:
 	cmp eax, ebx
-	je short .loop_6_init
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_SIZE)
 	inc eax
-	jmp short .loop_5
+	jne short .loop_5
 
-.loop_6_init:
+;loop_6_init:
 	mov ebx, 1024
 .loop_6:
 	cmp eax, ebx
-	je short .loop_done
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], 0
-	jmp short .loop_6
+	jne short .loop_6
 
 .loop_done:
 	xchg bx, bx ;bochs breakpoint
