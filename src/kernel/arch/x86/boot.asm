@@ -10,9 +10,9 @@ VIDEO_USE_TEXT equ 1
 VIDEO_HEIGHT   equ 115 ;chars here
 VIDEO_WIDTH    equ 58
 
-KERNEL_VIRT_BASE equ 0xC0000000 ;rodata, text
+VIRT_BASE equ 0xC0000000 ;rodata, text
 
-KERNEL_PD_INDEX  equ KERNEL_VIRT_BASE >> 22
+KERNEL_PD_INDEX  equ VIRT_BASE >> 22
 
 PD_PRESENT      equ 00000001b
 PD_READWRITE    equ 00000010b ;Read & Write
@@ -69,8 +69,8 @@ multiboot_magic_check: dd 0
 multiboot_info: dd 0
 
 boot_page_dir: resd 1024
-boot_low_page_table: resd 1024
-boot_high_page_table: resd 1024
+pt_low: resd 1024
+pt_high: resd 1024
 
 section .text
 global _start
@@ -79,11 +79,8 @@ extern rw_end
 extern ro_end
 _start:
 	mov dword [multiboot_magic_check], eax
-	add ebx, KERNEL_VIRT_BASE ;TODO: Check if this is even under the kernel
+	add ebx, VIRT_BASE ;TODO: Check if this is even under the kernel
 	mov dword [multiboot_info], ebx
-
-	xor ebx, ebx
-	mov eax, 0x100000
 	
 ;ok let's try this again...
 
@@ -94,7 +91,6 @@ _start:
 ;	[pt_low + i >> 12 & 0x03FF] = i | flags
 ;	i += 0x1000
 ;end
-;j = i
 ;while i < rw_end
 ;	[pt_low + i >> 12 & 0x03FF] = i | flags
 ;	i += 0x1000
@@ -109,11 +105,71 @@ _start:
 ;	i += 0x1000
 ;end
 
+	mov dword [boot_page_dir - VIRT_BASE], pt_low
+	mov dword [boot_page_dir - VIRT_BASE + (VIRT_BASE >> 22)], pt_high
+	xor eax, eax
+.loop1:
+	mov ebx, eax
+	mov ecx, eax
+	
+	shr ebx, 12
+	and ebx, 0x03FF ;ebx = eax >> 12 & 0x03FF
+	or ecx, (PT_PRESENT)
+	
+	mov dword [pt_low - VIRT_BASE + ebx], ecx
+	
+	add eax, 0x1000
+	cmp eax, ro_end
+	jl .loop1
 
+.loop2:
+	mov ebx, eax
+	mov ecx, eax
+	
+	shr ebx, 12
+	and ebx, 0x03FF
+	or ecx, (PT_PRESENT | PT_READWRITE)
+	
+	mov dword [pt_low - VIRT_BASE + ebx], ecx
+	
+	add eax, 0x1000
+	cmp eax, rw_end
+	jl .loop2
+
+	xor eax, eax
+.loop3:
+	mov ebx, eax
+	mov ecx, eax
+
+	add ebx, VIRT_BASE
+	shr ebx, 12
+	and ebx, 0x03FF
+	or ecx, (PT_PRESENT)
+
+	mov dword [pt_high - VIRT_BASE + ebx], ecx
+
+	add eax, 0x1000
+	cmp eax, ro_end
+	jl .loop3
+
+.loop4:
+	mov ebx, eax
+	mov ecx, eax
+
+	add ebx, VIRT_BASE
+	shr ebx, 12
+	and ebx, 0x03FF
+	or ecx, (PT_PRESENT | PT_READWRITE)
+
+	mov dword [pt_high - VIRT_BASE + ebx], ecx
+
+	add eax, 0x1000
+	cmp eax, rw_end
+	jl .loop4
 
 .loop_done:
 	xchg bx, bx ;bochs breakpoint
-	mov eax, (boot_page_dir - KERNEL_VIRT_BASE)
+	mov eax, (boot_page_dir - VIRT_BASE)
 	mov cr3, eax
 
 	mov eax, cr4
