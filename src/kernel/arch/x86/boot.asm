@@ -93,7 +93,7 @@ _start:
 	mov [eax], ebx
 	add eax, 4
 	add ebx, PAGE_SIZE
-	cmp ebx, ro_end
+	cmp ebx, (ro_end - VIRT_BASE)
 	jl .fill_ro
 
 	or ebx, PT_READWRITE
@@ -101,7 +101,7 @@ _start:
 	mov [eax], ebx
 	add eax, 4
 	add ebx, PAGE_SIZE
-	cmp ebx, rw_end
+	cmp ebx, (rw_end - VIRT_BASE)
 	jl .fill_rw
 
 .fill_pd:
