@@ -90,9 +90,9 @@ _start:
 	mov ebx, PT_PRESENT
 
 .fill_ro:
-	mov [eax], ebx
-	add eax, 4
-	add ebx, PAGE_SIZE
+	mov [eax], ebx ;insert entry
+	add eax, 4 ;next entry
+	add ebx, PAGE_SIZE ;next mem address
 	cmp ebx, (ro_end - VIRT_BASE)
 	jl .fill_ro
 
@@ -106,9 +106,11 @@ _start:
 
 .fill_pd:
 	lea eax, [page_dir - VIRT_BASE]
-	mov dword [eax], PD_PRESENT | PD_READWRITE
+	lea ebx, [page_table - VIRT_BASE]
+	or ebx, PD_PRESENT | PD_READWRITE
+	mov dword [eax], ebx
 	add eax, PD_INDEX
-	mov dword [eax], PD_PRESENT | PD_READWRITE
+	mov dword [eax], ebx
 
 .loop_done:
 	xchg bx, bx ;bochs breakpoint
