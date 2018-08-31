@@ -34,8 +34,8 @@ PT_GLOBAL       equ 100000000b ;prevents the TLB from updating the address in it
 PAGE_SIZE  equ 0x1000
 HUGE_SIZE equ 0x400000
 
-VIRT_BASE       equ  0xC0000000 ;rodata, text
-PD_INDEX equ VIRT_BASE >> 22
+VIRT_BASE equ  0xC0000000 ;rodata, text
+PD_INDEX  equ VIRT_BASE >> 22
 
 
 ;TODO: SUPPORT FUCKING INTELS FUCKING 4 LEVEL OR PAE BULLSHIT
@@ -82,7 +82,9 @@ extern kbegin
 extern rw_end
 extern ro_end
 _start:
-	mov dword [multiboot_magic_check], eax
+	cmp eax, 0x2BADB002
+	jne hang
+
 	add ebx, VIRT_BASE ;TODO: Check if this is even under the kernel
 	mov dword [multiboot_info], ebx
 
@@ -104,15 +106,15 @@ _start:
 	cmp ebx, (rw_end - VIRT_BASE)
 	jl .fill_rw
 
-.fill_pd:
-	lea eax, [page_dir - VIRT_BASE]
-	lea ebx, [page_table - VIRT_BASE]
-	or ebx, PD_PRESENT | PD_READWRITE
-	mov dword [eax], ebx
-	add eax, PD_INDEX
-	mov dword [eax], ebx
+;done with page table
+	lea ebx, [page_table - VIRT_BASE] ;load page table
+	or ebx, PD_PRESENT | PD_READWRITE ;set flags
 
-.loop_done:
+	lea eax, [page_dir - VIRT_BASE] ;load page dir
+	mov dword [eax], ebx ;move page table to 0 in page dir
+	add eax, PD_INDEX ;move to higher half entyr
+	mov dword [eax], ebx ;move page table to higher half entry
+
 	xchg bx, bx ;bochs breakpoint
 	lea eax, [page_dir - VIRT_BASE]
 	mov cr3, eax
@@ -140,9 +142,9 @@ higher_half_start:
 
 	call kbegin
 	cli
-.hang:
+hang:
 	hlt
-	jmp .hang
+	jmp hang
 
 global flush_gdt
 extern gdt_pointer
