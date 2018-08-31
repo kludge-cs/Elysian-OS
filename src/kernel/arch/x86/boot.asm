@@ -14,13 +14,27 @@ KERNEL_VIRT_BASE equ 0xC0000000 ;rodata, text
 
 KERNEL_PD_INDEX  equ KERNEL_VIRT_BASE >> 22
 
-PD_PRESENT      equ 0000001b
-PD_READWRITE    equ 0000010b ;Read & Write
-PD_USER         equ 0000100b ;if not set, only supervisor can access
-PD_WRITETHROUGH equ 0001000b ;writethrough if enabled, writeback if not
-PD_NOCACHE      equ 0010000b ;disable caching if set
-PD_ACCESSED     equ 0100000b ;should set set if page has been accessed
-PD_SIZE         equ 1000000b ;4kib vs 4mib
+PD_PRESENT      equ 00000001b
+PD_READWRITE    equ 00000010b ;Read & Write
+PD_USER         equ 00000100b ;if not set, only supervisor can access
+PD_WRITETHROUGH equ 00001000b ;writethrough if enabled, writeback if not
+PD_NOCACHE      equ 00010000b ;disable caching if set
+PD_ACCESSED     equ 00100000b ;should set set if page has been accessed
+PT_ZERO         equ 01000000b
+PD_SIZE         equ 10000000b ;4kib vs 4mib
+
+PT_PRESENT      equ 000000001b
+PT_READWRITE    equ 000000010b
+PT_USER         equ 000000100b
+PT_WRITETHROUGH equ 000001000b
+PT_NOCACHE      equ 000010000b
+PT_ACCESSED     equ 000100000b
+PT_DIRTY        equ 001000000b ;has it been written to
+PT_PAT          equ 010000000b ;fuck intel
+PT_GLOBAL       equ 100000000b ;prevents the TLB from updating the address in its cache if CR3 is reset
+
+;TODO: SUPPORT FUCKING INTELS FUCKING 4 LEVEL OR PAE BULLSHIT
+;TODO: figure out what PAT is
 
 
 section .multiboot
@@ -68,7 +82,34 @@ _start:
 	add ebx, KERNEL_VIRT_BASE ;TODO: Check if this is even under the kernel
 	mov dword [multiboot_info], ebx
 
-;RIP
+	xor ebx, ebx
+	mov eax, 0x100000
+	
+;ok let's try this again...
+
+;[pd + VIRT_BASE >> 22] = pt | flags
+;[pd] = pt_low | flags
+
+;while i < ro_end
+;	[pt_low + i >> 12 & 0x03FF] = i | flags
+;	i += 0x1000
+;end
+;j = i
+;while i < rw_end
+;	[pt_low + i >> 12 & 0x03FF] = i | flags
+;	i += 0x1000
+;end
+;i = 0
+;while i < ro_end
+;	[pt + (VIRT_BASE + i) >> 12 & 0x03FF] = i | flags
+;	i += 0x1000
+;end
+;while i < rw_end
+;	[pt + (VIRT_BASE + i) >> 12 & 0x03FF] = i | flags
+;	i += 0x1000
+;end
+
+
 
 .loop_done:
 	xchg bx, bx ;bochs breakpoint
