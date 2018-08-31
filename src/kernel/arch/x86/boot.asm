@@ -10,8 +10,6 @@ VIDEO_USE_TEXT equ 1
 VIDEO_HEIGHT   equ 115 ;chars here
 VIDEO_WIDTH    equ 58
 
-VIRT_BASE equ 0xC0000000 ;rodata, text
-
 KERNEL_PD_INDEX  equ VIRT_BASE >> 22
 
 PD_PRESENT      equ 00000001b
@@ -32,6 +30,13 @@ PT_ACCESSED     equ 000100000b
 PT_DIRTY        equ 001000000b ;has it been written to
 PT_PAT          equ 010000000b ;fuck intel
 PT_GLOBAL       equ 100000000b ;prevents the TLB from updating the address in its cache if CR3 is reset
+
+PAGE_SIZE  equ 0x1000
+HUGE_SIZE equ 0x400000
+
+VIRT_BASE       equ  0xC0000000 ;rodata, text
+PD_INDEX equ VIRT_BASE >> 22
+
 
 ;TODO: SUPPORT FUCKING INTELS FUCKING 4 LEVEL OR PAE BULLSHIT
 ;TODO: figure out what PAT is
@@ -68,9 +73,8 @@ global mboot_info_struct
 multiboot_magic_check: dd 0
 multiboot_info: dd 0
 
-boot_page_dir: resd 1024
-pt_low: resd 1024
-pt_high: resd 1024
+page_dir: resd 1024
+page_table: resd 1024
 
 section .text
 global _start
@@ -81,95 +85,34 @@ _start:
 	mov dword [multiboot_magic_check], eax
 	add ebx, VIRT_BASE ;TODO: Check if this is even under the kernel
 	mov dword [multiboot_info], ebx
-	
-;ok let's try this again...
 
-;[pd + VIRT_BASE >> 22] = pt | flags
-;[pd] = pt_low | flags
+	lea eax, [page_table - VIRT_BASE]
+	mov ebx, PT_PRESENT
 
-;while i < ro_end
-;	[pt_low + i >> 12 & 0x03FF] = i | flags
-;	i += 0x1000
-;end
-;while i < rw_end
-;	[pt_low + i >> 12 & 0x03FF] = i | flags
-;	i += 0x1000
-;end
-;i = 0
-;while i < ro_end
-;	[pt + (VIRT_BASE + i) >> 12 & 0x03FF] = i | flags
-;	i += 0x1000
-;end
-;while i < rw_end
-;	[pt + (VIRT_BASE + i) >> 12 & 0x03FF] = i | flags
-;	i += 0x1000
-;end
+.fill_ro:
+	mov [eax], ebx
+	add eax, 4
+	add ebx, PAGE_SIZE
+	cmp ebx, ro_end
+	jl .fill_ro
 
-	mov dword [boot_page_dir - VIRT_BASE], pt_low
-	mov dword [boot_page_dir - VIRT_BASE + (VIRT_BASE >> 22)], pt_high
-	xor eax, eax
-.loop1:
-	mov ebx, eax
-	mov ecx, eax
-	
-	shr ebx, 12
-	and ebx, 0x03FF ;ebx = eax >> 12 & 0x03FF
-	or ecx, (PT_PRESENT)
-	
-	mov dword [pt_low - VIRT_BASE + ebx], ecx
-	
-	add eax, 0x1000
-	cmp eax, ro_end
-	jl .loop1
+	or ebx, PT_READWRITE
+.fill_rw:
+	mov [eax], ebx
+	add eax, 4
+	add ebx, PAGE_SIZE
+	cmp ebx, rw_end
+	jl .fill_rw
 
-.loop2:
-	mov ebx, eax
-	mov ecx, eax
-	
-	shr ebx, 12
-	and ebx, 0x03FF
-	or ecx, (PT_PRESENT | PT_READWRITE)
-	
-	mov dword [pt_low - VIRT_BASE + ebx], ecx
-	
-	add eax, 0x1000
-	cmp eax, rw_end
-	jl .loop2
-
-	xor eax, eax
-.loop3:
-	mov ebx, eax
-	mov ecx, eax
-
-	add ebx, VIRT_BASE
-	shr ebx, 12
-	and ebx, 0x03FF
-	or ecx, (PT_PRESENT)
-
-	mov dword [pt_high - VIRT_BASE + ebx], ecx
-
-	add eax, 0x1000
-	cmp eax, ro_end
-	jl .loop3
-
-.loop4:
-	mov ebx, eax
-	mov ecx, eax
-
-	add ebx, VIRT_BASE
-	shr ebx, 12
-	and ebx, 0x03FF
-	or ecx, (PT_PRESENT | PT_READWRITE)
-
-	mov dword [pt_high - VIRT_BASE + ebx], ecx
-
-	add eax, 0x1000
-	cmp eax, rw_end
-	jl .loop4
+.fill_pd:
+	lea eax, [page_dir - VIRT_BASE]
+	mov dword [eax], PD_PRESENT | PD_READWRITE
+	add eax, PD_INDEX
+	mov dword [eax], PD_PRESENT | PD_READWRITE
 
 .loop_done:
 	xchg bx, bx ;bochs breakpoint
-	mov eax, (boot_page_dir - VIRT_BASE)
+	lea eax, [page_dir - VIRT_BASE]
 	mov cr3, eax
 
 	mov eax, cr4
@@ -186,7 +129,7 @@ _start:
 higher_half_start:
 	xchg bx, bx ;bochs breakpoint
 	;now in higher half
-	mov dword [boot_page_dir], 0 ;zero out first entry of page dir
+	mov dword [page_dir], 0 ;zero out first entry of page dir
 	invlpg [0] ;get rid of it
 	;boom, done
 
