@@ -7,7 +7,7 @@ MBOOT_VID_MODE equ 1<<2
 MBOOT_FLAGS    equ MBOOT_ALIGN | MBOOT_MEM_INFO | MBOOT_VID_MODE
 
 VIDEO_USE_TEXT equ 1
-VIDEO_HEIGHT   equ 115 ;chars
+VIDEO_HEIGHT   equ 115 ;chars here
 VIDEO_WIDTH    equ 58
 
 KERNEL_VIRT_BASE equ 0xC0000000 ;rodata, text
@@ -53,8 +53,10 @@ global mboot_magic_check
 global mboot_info_struct
 multiboot_magic_check: dd 0
 multiboot_info: dd 0
-boot_page_dir:
-	resd 1024
+
+boot_page_dir: resd 1024
+boot_low_page_table: resd 1024
+boot_high_page_table: resd 1024
 
 section .text
 global _start
@@ -64,7 +66,7 @@ extern ro_end
 _start:
 	mov dword [multiboot_magic_check], eax
 	add ebx, KERNEL_VIRT_BASE ;TODO: Check if this is even under the kernel
-	mov dword [multiboot_info_struct], ebx
+	mov dword [multiboot_info], ebx
 
 	;i = 0
 	;while (i != ro_end >> 22)
@@ -110,7 +112,7 @@ _start:
 .loop_1:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT)
-	inc eax
+	add eax, 4
 	jl short .loop_1
 
 ;loop_2_init:
@@ -119,8 +121,8 @@ _start:
 	shr ebx, 22
 .loop_2:
 	cmp eax, ebx
-	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_SIZE)
-	inc eax
+	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_READWRITE)
+	add eax, 4
 	jl short .loop_2
 
 ;loop_3_init:
@@ -130,7 +132,7 @@ _start:
 .loop_3:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], 0
-	inc eax
+	add eax, 4
 	jl short .loop_3
 
 ;loop_4_init:
@@ -138,7 +140,7 @@ _start:
 .loop_4:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT)
-	inc eax
+	add eax, 4
 	jl short .loop_4
 
 ;loop_5_init:
@@ -146,8 +148,8 @@ _start:
 	add ebx, edx ;VIRT_BASE + k
 .loop_5:
 	cmp eax, ebx
-	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_SIZE)
-	inc eax
+	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_READWRITE)
+	add eax, 4
 	jl short .loop_5
 
 ;loop_6_init:
@@ -155,7 +157,7 @@ _start:
 .loop_6:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], 0
-	inc eax
+	add eax, 4
 	jl short .loop_6
 
 .loop_done:

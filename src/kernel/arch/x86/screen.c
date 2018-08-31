@@ -114,6 +114,6 @@ void set_color(enum color fg, enum color bg)
 void screen_init(void)
 {
 	attrib = 0x8F;
-	output_pointer = (unsigned short *)0xB8000;
+	output_pointer = (unsigned short *)0xC00B8000; //needs to account for the higher half offset, so 0xC00B8000 instead of 0xB8000
 	blink_off();
 }
