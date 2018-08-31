@@ -52,7 +52,7 @@ align 0x1000
 global mboot_magic_check
 global mboot_info_struct
 multiboot_magic_check: dd 0
-multiboot_info: resb 115
+multiboot_info: dd 0
 boot_page_dir:
 	resd 1024
 
@@ -62,10 +62,10 @@ extern kbegin
 extern rw_end
 extern ro_end
 _start:
-	;TODO: move multiboot stuff
-	;mov [multiboot_magic_check], eax
-	;mov [multiboot_info_struct], [ebx]
-	
+	mov dword [multiboot_magic_check], eax
+	add ebx, KERNEL_VIRT_BASE ;TODO: Check if this is even under the kernel
+	mov dword [multiboot_info_struct], ebx
+
 	;i = 0
 	;while (i != ro_end >> 22)
 	;do
@@ -111,7 +111,7 @@ _start:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT)
 	inc eax
-	jne short .loop_1
+	jl short .loop_1
 
 ;loop_2_init:
 	mov eax, ecx ;i->j
@@ -121,7 +121,7 @@ _start:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_SIZE)
 	inc eax
-	jne short .loop_2
+	jl short .loop_2
 
 ;loop_3_init:
 	mov edx, eax ;i->k
@@ -131,7 +131,7 @@ _start:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], 0
 	inc eax
-	jne short .loop_3
+	jl short .loop_3
 
 ;loop_4_init:
 	add ebx, ecx
@@ -139,23 +139,24 @@ _start:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT)
 	inc eax
-	jne short .loop_4
+	jl short .loop_4
 
 ;loop_5_init:
-	sub ebx, ecx ;VIRT_BASE - j
+	sub ebx, ecx ;VIRT_BASE + j - j
 	add ebx, edx ;VIRT_BASE + k
 .loop_5:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], (PD_PRESENT | PD_SIZE)
 	inc eax
-	jne short .loop_5
+	jl short .loop_5
 
 ;loop_6_init:
 	mov ebx, 1024
 .loop_6:
 	cmp eax, ebx
 	mov dword [(boot_page_dir - KERNEL_VIRT_BASE) + eax], 0
-	jne short .loop_6
+	inc eax
+	jl short .loop_6
 
 .loop_done:
 	xchg bx, bx ;bochs breakpoint
@@ -163,7 +164,7 @@ _start:
 	mov cr3, eax
 
 	mov eax, cr4
-	or eax, 0x10 ;enable PSE (4MiB pages)
+	or eax, 0x00000010 ;enable PSE (4MiB pages)
 	mov cr4, eax
 
 	mov eax, cr0
