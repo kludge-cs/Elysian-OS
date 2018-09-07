@@ -124,7 +124,7 @@ _start:
 	mov eax, cr0
 	or eax, 0x80010001 ;enable paging, WP, PE
 	mov cr0, eax
-
+	
 	lea eax, [higher_half_start]
 	jmp eax
 
