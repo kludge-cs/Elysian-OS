@@ -65,8 +65,11 @@ global mboot_info_struct
 multiboot_magic_check: dd 0
 multiboot_info: dd 0
 align 0x1000
-page_dir: resd 1024
-page_table: resd 1024
+page_dir:
+	dd PD_PRESENT | PD_READWRITE | PD_SIZE
+	times (PD_INDEX - 1) dd 0
+	dd PD_PRESENT | PD_READWRITE | PD_SIZE
+	times (1024 - (PD_INDEX - 1)) dd 0
 
 section .text
 global _start
@@ -80,56 +83,23 @@ _start:
 	add ebx, VIRT_BASE ;TODO: Check if this is even under the kernel
 	mov dword [multiboot_info], ebx
 
-;Start with paging stuff:
-	lea eax, [page_table - VIRT_BASE]
-	
-	mov ebx, PT_PRESENT
-
-	mov ecx, (ro_end - VIRT_BASE)
-	shr ecx, 12
-
-.fill_ro:
-	mov dword [eax], ebx ;insert entry
-	add eax, 4 ;next entry
-	add ebx, PAGE_SIZE ;next mem address
-	loop .fill_ro
-;;
-
-	or ebx, PT_READWRITE
-	mov ecx, (rw_end - VIRT_BASE)
-	sub ecx, (ro_end - VIRT_BASE) ;subtract what we already did
-	shr ecx, 12
-.fill_rw:
-	mov dword [eax], ebx
-	add eax, 4
-	add ebx, PAGE_SIZE
-	loop .fill_rw
-;;
-
-;done with PT, fill PD
-	lea ebx, [page_table - VIRT_BASE]
-	or ebx, PD_PRESENT | PD_READWRITE ;set flags for PD entry
-
-	mov dword [page_dir - VIRT_BASE], ebx
-	mov dword [page_dir - VIRT_BASE + PD_INDEX], ebx ;move page table to higher half entry
-
 ;actually enable paging and stuff
 	lea eax, [page_dir - VIRT_BASE]
 	mov cr3, eax
-
+ 
 	mov eax, cr4
 	or eax, 0x00000010 ;enable PSE (4MiB pages)
 	mov cr4, eax
 
 	mov eax, cr0
-	or eax, 0x80010001 ;enable paging, WP, PE
+	or eax, 0x80010000 ;enable paging, WP
 	mov cr0, eax
 	
 	lea eax, [higher_half_start]
 	jmp eax
+	;for some stupid reason, CR3 changes to 0 here
 
 higher_half_start:
-	xchg bx, bx ;bochs breakpoint
 	;now in higher half
 	mov dword [page_dir], 0 ;zero out first entry of page dir
 	invlpg [0] ;get rid of it
