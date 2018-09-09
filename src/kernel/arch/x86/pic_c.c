@@ -1,7 +1,8 @@
+#include <types.h>
+
 #include <pic_c.h>
 #include <screen.h>
 #include <util.h>
-#include <types.h>
 #include <ports.h>
 #include <idt.h>
 

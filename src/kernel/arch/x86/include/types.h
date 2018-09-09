@@ -1,6 +1,3 @@
-#ifndef _TYPES_H
-#define _TYPES_H
-
 typedef signed char   int8;
 typedef unsigned char uint8;
 
@@ -20,5 +17,3 @@ struct regs_struct
 	unsigned int int_num, err_code;
 	unsigned int eip, cs, eflags, useresp, ss; /* Auto-pushed */ 
 };
-
-#endif

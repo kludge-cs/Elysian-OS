@@ -1,4 +1,4 @@
-#include <types.h>
+/* Requires types.h */
 
 void * memcpy( void * s1, const void * s2, int64 n );
 

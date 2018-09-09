@@ -3,10 +3,6 @@
 #include <util.h>
 #include <screen.h>
 
-#ifdef _DEBUG
-//#include <panic.h>
-#endif
-
 /* * * * * * * * * * * * * * *
 * Type_attr is as follows:    *
 *   7  6   5  4  3         0  *

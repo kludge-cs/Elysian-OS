@@ -1,6 +1,4 @@
-#ifndef _IDT_H
-#define _IDT_H
-#include <types.h>
+/* Requires types.h */
 
 #define IDT_DESC_BITS_16    0x06    //00000110
 #define IDT_DESC_BITS_32    0x0E    //00001110
@@ -13,5 +11,3 @@ void idt_add(uint8 num, uint8 flags, uint16 selector, uint32 offset);
 void install_idt(uint16 selector);
 
 void int_handler(struct regs_struct *regs);
-
-#endif

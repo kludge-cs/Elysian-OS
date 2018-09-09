@@ -62,6 +62,7 @@ mboot_header:
 section .data
 global mboot_magic_check
 global mboot_info_struct
+global page_dir
 multiboot_magic_check: dd 0
 multiboot_info: dd 0
 align 0x1000
@@ -97,7 +98,6 @@ _start:
 	
 	lea eax, [higher_half_start]
 	jmp eax
-	;for some stupid reason, CR3 changes to 0 here
 
 higher_half_start:
 	;now in higher half

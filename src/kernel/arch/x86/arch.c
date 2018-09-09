@@ -1,3 +1,4 @@
+#include <types.h>
 #include <screen.h>
 #include <gdt.h>
 #include <idt.h>
