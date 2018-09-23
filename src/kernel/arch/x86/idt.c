@@ -118,38 +118,41 @@ void install_idt(uint16 selector)
 	idt_pointer.base = (uint32)&idt;
 
 	memset(&idt, 0, sizeof(struct idt_entry) * 256);
-	idt_add(0,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr0);
-	idt_add(1,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr1);
-	idt_add(2,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr2);
-	idt_add(3,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr3);
-	idt_add(4,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr4);
-	idt_add(5,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr5);
-	idt_add(6,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr6);
-	idt_add(7,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr7);
-	idt_add(8,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr8);
-	idt_add(9,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr9);
-	idt_add(10, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr10);
-	idt_add(11, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr11);
-	idt_add(12, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr12);
-	idt_add(13, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr13);
-	idt_add(14, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr14);
-	idt_add(15, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr15);
-	idt_add(16, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr16);
-	idt_add(17, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr17);
-	idt_add(18, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr18);
-	idt_add(19, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr19);
-	idt_add(20, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr20);
-	idt_add(21, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr21);
-	idt_add(22, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr22);
-	idt_add(23, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr23);
-	idt_add(24, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr24);
-	idt_add(25, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr25);
-	idt_add(26, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr26);
-	idt_add(27, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr27);
-	idt_add(28, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr28);
-	idt_add(29, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr29);
-	idt_add(30, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr30);
-	idt_add(31, IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr31);
+	
+#define FILL_GATE(n) idt_add(n,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr##n);
+	FILL_GATE(0)
+	FILL_GATE(1)
+	FILL_GATE(2)
+	FILL_GATE(3)
+	FILL_GATE(4)
+	FILL_GATE(5)
+	FILL_GATE(6)
+	FILL_GATE(7)
+	FILL_GATE(8)
+	FILL_GATE(9)
+	FILL_GATE(10)
+	FILL_GATE(11)
+	FILL_GATE(12)
+	FILL_GATE(13)
+	FILL_GATE(14)
+	FILL_GATE(15)
+	FILL_GATE(16)
+	FILL_GATE(17)
+	FILL_GATE(18)
+	FILL_GATE(19)
+	FILL_GATE(20)
+	FILL_GATE(21)
+	FILL_GATE(22)
+	FILL_GATE(23)
+	FILL_GATE(24)
+	FILL_GATE(25)
+	FILL_GATE(26)
+	FILL_GATE(27)
+	FILL_GATE(28)
+	FILL_GATE(29)
+	FILL_GATE(30)
+	FILL_GATE(31)
+#undef fillgate
 
 	/* Load */
 	asm volatile ("lidt %0" : : "m" (idt_pointer));
