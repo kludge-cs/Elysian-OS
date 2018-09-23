@@ -54,7 +54,7 @@ struct gdt_entry
 struct gdt_entry gdt[3];
 struct gdt_ptr_struct gdt_pointer;
 
-void gdt_add(int num, uint64 base, uint64 limit, uint8 access, uint8 flags)
+void gdt_add(int num, uint32 base, uint32 limit, uint8 access, uint8 flags)
 {
 	/* Set base address */
 	gdt[num].base_low    = (base & 0xFFFF);
@@ -64,7 +64,7 @@ void gdt_add(int num, uint64 base, uint64 limit, uint8 access, uint8 flags)
 	/* Set limits */
 	gdt[num].limit_low = (limit & 0xFFFF);
 
-	/* Set granularity and limit_high */
+	/* Set granularity and top 4 bits of limit */
 	gdt[num].highlimit_flags = ((limit >> 16) & 0x0F) | ((flags << 4) & 0xF0);
 
 	/* Set access */
@@ -78,10 +78,10 @@ void install_gdt()
 
 	/* NULL */
 	gdt_add(0, 0, 0, 0, 0);
-	
+
 	/* Let's cover everything, for now */
-	gdt_add(1, 0, 0xFFFFFFFF, GDT_CODE, GDT_GRANULARITY | GDT_OPSIZE);
-	gdt_add(2, 0, 0xFFFFFFFF, GDT_DATA, GDT_GRANULARITY | GDT_OPSIZE);
+	gdt_add(1, 0, 0xFFFFF, GDT_CODE, GDT_GRANULARITY | GDT_OPSIZE);
+	gdt_add(2, 0, 0xFFFFF, GDT_DATA, GDT_GRANULARITY | GDT_OPSIZE);
 
 	/* Flush and update */
 	flush_gdt();

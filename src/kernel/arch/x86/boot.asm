@@ -105,7 +105,7 @@ higher_half_start:
 	invlpg [0] ;get rid of it
 	;boom, done
 
-	mov esp, stack_top ;set up stack
+	mov esp, stack_top
 	cli ;we can't do interrupts yet
 
 	call kbegin
@@ -135,6 +135,7 @@ flush_end:
 	mov gs, ax
 	mov ss, ax
 	ret
+
 
 section .bss
 global stack_bottom
