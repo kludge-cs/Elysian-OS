@@ -7,8 +7,12 @@
 - [ ] Ring 3
 - [ ] Syscalls
 
-# Very far Goals:
+# Mid-term
+- [ ] Start VFS
 - [ ] NetBSD Rump Kernel Hypercall support
+- [ ] FS
+
+# Far Goals:
 - [ ] Networking
 - [ ] Networked IPC
 - [ ] Task distribution
