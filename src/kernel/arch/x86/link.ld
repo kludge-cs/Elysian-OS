@@ -17,9 +17,6 @@ SECTIONS
 		*(.rodata)
 	}
 	
-	. = ALIGN(0x1000);
-	PROVIDE(ro_end = .);
-
 	.data : AT(ADDR(.data) - 0xC0000000)
 	{
 		*(.data)
@@ -29,6 +26,6 @@ SECTIONS
 	{
 		*(.bss)
 	}
-	. = ALIGN(0x1000);
-	PROVIDE(rw_end = .);
+
+	PROVIDE(kernel_end = .);
 }
