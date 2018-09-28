@@ -1,5 +1,5 @@
 #include <types.h>
-#include <util.h>
+#include <strings.h>
 #include <screen.h>
 #include <ports.h>
 

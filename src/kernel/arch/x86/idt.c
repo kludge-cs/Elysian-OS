@@ -1,6 +1,7 @@
 #include <types.h>
 #include <idt.h>
-#include <util.h>
+#include <strings.h>
+#include <console.h>
 #include <screen.h>
 
 /* * * * * * * * * * * * * * *

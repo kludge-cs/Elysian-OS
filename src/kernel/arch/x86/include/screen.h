@@ -1,3 +1,4 @@
+#pragma once
 #define index(X, Y) ((Y * 80) + X)
 #define setattr(chr, attr) (chr | (attr << 8))
 

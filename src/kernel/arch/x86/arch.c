@@ -4,7 +4,7 @@
 #include <idt.h>
 #include <pic_c.h>
 #include <time.h>
-#include <util.h>
+#include <console.h>
 
 struct multiboot_info_struct
 {

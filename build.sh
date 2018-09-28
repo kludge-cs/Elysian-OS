@@ -56,6 +56,7 @@ do
 	linkfiles="$linkfiles $object"
 done
 
+echo -e "${green}\nCompiling HAL${clr}"
 for file in arch/$PLATFORM/*.c
 do
 	object=${file/".c"/}".o"
