@@ -55,7 +55,7 @@ struct gdt_entry
 struct gdt_entry gdt[3];
 struct gdt_ptr_struct gdt_pointer;
 
-void gdt_add(int num, uint32 base, uint32 limit, uint8 access, uint8 flags)
+void gdt_add (int num, uint32 base, uint32 limit, uint8 access, uint8 flags)
 {
 	/* Set base address */
 	gdt[num].base_low    = (base & 0xFFFF);
@@ -72,7 +72,7 @@ void gdt_add(int num, uint32 base, uint32 limit, uint8 access, uint8 flags)
 	gdt[num].access = access;
 }
 
-void install_gdt()
+void install_gdt (void)
 {
 	gdt_pointer.limit = (sizeof(struct gdt_entry) * 3) - 1;
 	gdt_pointer.base = (uint32)&gdt;

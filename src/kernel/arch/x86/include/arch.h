@@ -1,1 +1,2 @@
-int arch_init();
+#pragma once
+int arch_init (void);

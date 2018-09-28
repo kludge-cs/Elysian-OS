@@ -8,7 +8,7 @@
 #include <_multiboot.h>
 
 
-int arch_init()
+int arch_init (void)
 {
 	/*
 	extern int *multiboot_magic_check;

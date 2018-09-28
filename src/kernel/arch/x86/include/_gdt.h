@@ -1,1 +1,2 @@
-void install_gdt();
+#pragma once
+void install_gdt (void);

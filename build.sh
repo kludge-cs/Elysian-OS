@@ -6,7 +6,7 @@ CCPLATFORM="i386"
 BINLOC="$HOME/i386elfgcc/bin" #location of compiliation tools
 CC="$BINLOC/$CCPLATFORM-elf-gcc"
 LD="$BINLOC/$CCPLATFORM-elf-ld"
-CCFLAGS="-D ARCH=$PLATFORM -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -I./include -I./libk/include -I./arch/$PLATFORM/include -c"
+CCFLAGS="-D ARCH=$PLATFORM -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -mgeneral-regs-only -I./include -I./libk/include -I./arch/$PLATFORM/include -c"
 
 red=`tput setaf 1`
 green=`tput setaf 2`
@@ -65,7 +65,7 @@ for file in arch/$PLATFORM/*.c
 do
 	object=${file/".c"/}".o"
 	echo "$file -> $object"
-	$CC $file -mgeneral-regs-only $CCFLAGS -o $object
+	$CC $file  $CCFLAGS -o $object
 	linkfiles="$linkfiles $object"
 done
 
