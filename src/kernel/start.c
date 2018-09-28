@@ -1,10 +1,13 @@
 #include <arch.h>
 #include <types.h>
+#include <panic.h>
 
-void __attribute__((__cdecl__)) kbegin()
+ __attribute__ ((cdecl))
+void kbegin ()
 {
 	//extern char *stack_top, *stack_bottom;
 
 	arch_init();
+
 	while(1);
 }

@@ -1,7 +1,7 @@
 #include <types.h>
 #include <time.h>
 #include <ports.h>
-#include <pic_c.h>
+#include <_pic.h>
 
 volatile uint32 _ticks;
 uint32 _freq;

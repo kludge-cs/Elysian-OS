@@ -11,52 +11,15 @@ extern void blink_off();
 extern void blink_toggle();
 
 
-void putch(char chr)
+void raw_putch (char ch)
 {
 	unsigned short *loc;
 
-	switch (chr)
-	{
-		case 0x08: /* Backspace */
-			if (pos_x != 0)
-				pos_x--;
-			else if (pos_y != 0) /* (pos_x == 0) && (pos_y != 0) */
-				pos_y--;
-			break;
-			
-		case 0x09: /* Tab */
-			if (pos_x >= 80)
-			{
-				pos_x = 0;
-				pos_y++;
-			}
-			pos_x = (pos_x + 4) & ~(4 - 1); /* Increment X to the next place where it is divisible by 4 */
-			break;
-
-		case '\r': /* Carriage return */
-			pos_x = 0;
-			break;
-
-		case '\n': /* newline */
-			pos_x = 0;
-			pos_y++;
-			break;
-
-		default:
-			if (pos_x >= 80)
-			{
-				pos_x = 0;
-				pos_y++;
-			}
-			loc = output_pointer + index(pos_x, pos_y); /* Get correct location */
-			*loc = setattr(chr, attrib); /* Set memory */
-			pos_x++;
-	}
-	update_scroll();
-	update_curs();
+	loc = output_pointer + index(pos_x, pos_y);
+	*loc = setattr(ch, attrib);
 }
 
-void update_curs(void)
+void update_curs (void)
 {
 	unsigned int pos_index = index(pos_x, pos_x);
 
@@ -68,7 +31,7 @@ void update_curs(void)
 	port_out(0x3D5, pos_index);
 }
 
-void clear_screen(void)
+void clear_screen (void)
 {
 	const unsigned int blank = setattr(' ', attrib);
 	unsigned short *loc;
@@ -106,13 +69,13 @@ void update_scroll (void)
 	}
 }
 
-void set_color(enum color fg, enum color bg)
+void set_color (enum color fg, enum color bg)
 {
 	/* Top 4 bytes is bg, bottom 4 is fg */
 	attrib = ((uint8)bg << 4) | ((uint8)fg & 0x0F);
 }
 
-void screen_init(void)
+void screen_init (void)
 {
 	attrib = 0x8F;
 	output_pointer = (unsigned short *)0xC00B8000; //needs to account for the higher half offset, so 0xC00B8000 instead of 0xB8000

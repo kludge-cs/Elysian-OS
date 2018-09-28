@@ -1,8 +1,8 @@
 #include <types.h>
 
-#include <pic_c.h>
+#include <_pic.h>
 #include <ports.h>
-#include <idt.h>
+#include <_idt.h>
 
 
 

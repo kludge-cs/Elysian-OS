@@ -1,8 +1,10 @@
 #include <types.h>
-#include <idt.h>
+#include <_types.h>
+#include <_idt.h>
 #include <strings.h>
 #include <console.h>
 #include <screen.h>
+#include <panic.h>
 
 /* * * * * * * * * * * * * * *
 * Type_attr is as follows:    *
@@ -103,7 +105,7 @@ char *exception_msg[] =
 	"EXCEPTION: Reserved - #31"
 };
 
-void idt_add(uint8 num, uint8 flags, uint16 selector, uint32 offset)
+void idt_add (uint8 num, uint8 flags, uint16 selector, uint32 offset)
 {
 	idt[num].offset_low = (offset & 0xFFFF);
 	idt[num].offset_high = (offset >> 16) & 0xFFFF;
@@ -113,7 +115,7 @@ void idt_add(uint8 num, uint8 flags, uint16 selector, uint32 offset)
 }
 
 
-void install_idt(uint16 selector)
+void install_idt (uint16 selector)
 {
 	idt_pointer.limit = (sizeof(struct idt_entry) * 256) - 1;
 	idt_pointer.base = (uint32)&idt;
@@ -159,20 +161,11 @@ void install_idt(uint16 selector)
 	asm volatile ("lidt %0" : : "m" (idt_pointer));
 }
 
-void __attribute__((__cdecl__)) int_handler(struct regs_struct *regs)
+__attribute__((__cdecl__))
+void int_handler (struct regs_struct *regs)
 {
 	if (regs->int_num > 31)
-	{
-		puts("===============================================================");
-		puts("                        KERNEL PANIC!                          ");
-		puts("===============================================================");
-		puts("Reason: Unknown exception!");
-		puts("Debugger unimplemented!");
-		puts("System halted.");
-		while(1);
-	}
+		panic("Unknown exception!");
 	else
-	{
 		puts(exception_msg[regs->int_num]);
-	}
 }
