@@ -68,3 +68,12 @@ void screen_clear (void)
 	pos_y = 0;
 	update_curs();
 }
+
+void color_puts (char *text, enum color_e fg, enum color_e bg)
+{
+	enum color_e colors[2];
+	get_colors(colors);
+	set_colors(fg, bg);
+	puts(text);
+	set_colors(colors[0], colors[1]);
+}

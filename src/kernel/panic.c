@@ -1,15 +1,16 @@
 #include <console.h>
+#include <screen.h>
 
  __attribute__ ((cdecl))
 void panic (char message[])
 {
-	screen_clear();
-	puts("==============================");
+	set_colors(White, Red);
+	puts("\n==============================");
 	puts("-------- KERNEL PANIC --------");
-	puts("==============================\n\n");
-
+	puts("==============================");
+	puts("                              ");
+	puts("                              ");
 	puts(message);
-	puts("Debugger unimplemented!");
-	puts("System halted.");
+	puts("System halted.                ");
 	while (1);
 }

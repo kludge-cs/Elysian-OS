@@ -10,7 +10,6 @@ extern void blink_on();
 extern void blink_off();
 extern void blink_toggle();
 
-
 void raw_putch (char ch)
 {
 	unsigned short *loc;
@@ -69,7 +68,7 @@ void update_scroll (void)
 	}
 }
 
-void set_color (enum color fg, enum color bg)
+void set_colors (enum color_e fg, enum color_e bg)
 {
 	/* Top 4 bytes is bg, bottom 4 is fg */
 	attrib = ((uint8)bg << 4) | ((uint8)fg & 0x0F);
@@ -77,7 +76,13 @@ void set_color (enum color fg, enum color bg)
 
 void screen_init (void)
 {
-	attrib = 0x8F;
+	set_colors(White, Black);
 	output_pointer = (unsigned short *)0xC00B8000; //needs to account for the higher half offset, so 0xC00B8000 instead of 0xB8000
 	blink_off();
+}
+
+void get_colors (enum color_e * colors)
+{
+	colors[1] = attrib >> 4; /* Background */
+	colors[0] = attrib & 0x0F; /* Foreground */
 }

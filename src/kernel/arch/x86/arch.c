@@ -10,36 +10,27 @@
 
 int arch_init (void)
 {
-	/*
-	extern int *multiboot_magic_check;
-	//extern struct multiboot_info_struct multiboot_info;
-	*/
-	/* Init screen */
 	screen_init();
 	clear_screen();
 
-	/*if (multiboot_magic_check != 0x2BADB002)
-	{
-		puts("Invalid multiboot magic!");
-		return -1;
-	}*/
+	color_puts(" Booting Project Mira... (Name will be changed later) \n", Magenta, White);
 
 	puts("Initializing GDT...");
 	install_gdt();
-	puts("GDT initialized!");
+	color_puts("GDT initialized!\n", Light_Green, Black);
 
 	puts("Initializing IDT...");
 	install_idt(0x08);
-	puts("IDT initialized!");
+	color_puts("IDT initialized!\n", Light_Green, Black);
 
 	puts("Setting up PIC...");
 	irq_install(0x08);
-	puts("PIC initialized!");
+	color_puts("PIC initialized!\n", Light_Green, Black);
 
 	asm volatile ("sti");
 
 	puts("Setting up PIT...");
 	timer_install(100);
-	puts("PIT initialized!");
+	color_puts("PIT initialized!\n", Light_Green, Black);
 	return 0;
 }
