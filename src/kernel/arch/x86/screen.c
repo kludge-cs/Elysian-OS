@@ -58,7 +58,7 @@ void update_scroll (void)
 	if (pos_y >= 25) /* Check if we are at end of screen */
 	{
 		/* move up by two lines */
-		temp = pos_y - 25 + 1; //should be just 1
+		temp = pos_y - 25 + 1;
 		/* copy screen up */
 		memcpy(output_pointer, output_pointer + temp * 80, (25 - temp) * 80 * 2);
 		/* blank out last line */
@@ -77,7 +77,7 @@ void set_colors (enum color_e fg, enum color_e bg)
 void screen_init (void)
 {
 	set_colors(White, Black);
-	output_pointer = (unsigned short *)0xC00B8000; //needs to account for the higher half offset, so 0xC00B8000 instead of 0xB8000
+	output_pointer = (unsigned short *)0xC00B8000;
 	blink_off();
 }
 

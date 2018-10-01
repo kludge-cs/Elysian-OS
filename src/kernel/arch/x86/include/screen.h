@@ -21,7 +21,7 @@ enum color_e
 	Light_Red,
 	Light_Magenta,
 	Light_Brown,
-	White,
+	White
 };
 
 unsigned int pos_x;

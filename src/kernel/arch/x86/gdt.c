@@ -25,12 +25,12 @@
 * A - Available for system                *
 * * * * * * * * * * * * * * * * * * * * * */
 
-extern void flush_gdt(); //defined in boot.asm
+extern void flush_gdt();
 
 struct gdt_ptr_struct
 {
-   uint16 limit;               // The upper 16 bits of all selector limits.
-   uint32 base;                // The address of the first gdt_entry_t struct.
+   uint16 limit;               /* The upper 16 bits of all selector limits. */
+   uint32 base;                /* The address of the first gdt_entry_t struct. */
 } __attribute__((packed));
 
 struct gdt_entry

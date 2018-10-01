@@ -22,7 +22,7 @@ struct idt_entry
 {
 	uint16 offset_low;
 	uint16 selector;
-	uint8  zero; //unused
+	uint8  zero;
 	uint8  type_attr;
 	uint16 offset_high;
 } __attribute__((packed));
@@ -158,7 +158,7 @@ void install_idt (uint16 selector)
 #undef fillgate
 
 	/* Load */
-	asm volatile ("lidt %0" : : "m" (idt_pointer));
+	__asm__ volatile ("lidt %0" : : "m" (idt_pointer));
 }
 
 __attribute__((__cdecl__))

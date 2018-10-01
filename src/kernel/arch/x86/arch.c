@@ -33,7 +33,7 @@ int arch_init (void)
 	irq_install(0x08);
 	color_puts("PIC initialized!\n", Light_Green, Black);
 
-	asm volatile ("sti");
+	__asm__ volatile ("sti");
 
 	puts("Setting up PIT...");
 	timer_install(100);

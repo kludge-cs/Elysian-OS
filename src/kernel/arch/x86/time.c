@@ -31,9 +31,10 @@ uint32 _freq;
 
 void set_interval(uint32 hz)
 {
+	uint32 num;
 	_freq = hz;
-	uint32 num = (uint32)1193180 / hz;
-	port_out(0x43, 0b00110110); /* Set command register */
+	num = (uint32)1193180 / hz;
+	port_out(0x43, 0x36); /* Set command register: 0x36=0b00110110 */
 	port_out(0x40, num & 0xFF);    /* Set low byte */
 	port_out(0x40, num >> 8);      /* Set high byte */
 }
@@ -54,5 +55,5 @@ void delay(uint32 amount)
 	uint32 eticks;
 	eticks = amount + _ticks;
 	while(_ticks < eticks)
-		asm volatile ("sti//hlt//cli");
+		__asm__ volatile ("sti//hlt//cli");
 }

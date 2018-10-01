@@ -28,7 +28,7 @@ extern void irq15();
 extern void pic_init();
 
 /* Array of func pointers */
-static void *irq_routines[16] =
+static void (*irq_routines[16])(struct regs_struct *regs)  =
 {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0
@@ -57,9 +57,9 @@ irq_handler_main
 		handler(regs);
 
 	if (inum >= 40)
-		port_out(0xA0, 0x20); //send EOI to slave
+		port_out(0xA0, 0x20); /* send EOI to slave */
 	
-	port_out(0x20, 0x20); //send EOI to master
+	port_out(0x20, 0x20); /* send EOI to master */
 }
 
 void irq_install(uint16 selector)

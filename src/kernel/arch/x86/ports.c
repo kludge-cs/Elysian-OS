@@ -12,11 +12,11 @@ unsigned char port_in(unsigned short port)
 			);
 	*/
 	
-	asm volatile
+	__asm__ volatile
 	(
 		"in %1, %0"
-		: "=a" (result) // %1, a for EAX, AL, AX
-		: "d" (port) // %0, N means a constant of 0-255, d for EDX, DX, DL
+		: "=a" (result) /* %1, a for EAX, AL, AX */
+		: "d" (port) /* %0, N means a constant of 0-255, d for EDX, DX, DL */
 	);
 	
 	return result;
@@ -24,7 +24,7 @@ unsigned char port_in(unsigned short port)
 
 void port_out(unsigned short port, unsigned char data)
 {
-	asm volatile
+	__asm__ volatile
 	(
 		"out %1, %0"
 		: /* no output */
