@@ -66,6 +66,11 @@ buildc arch/$PLATFORM
 
 echo -e "${green}\nLinking object files...${clr}"
 $BINLOC/$CCPLATFORM-elf-ld -T arch/$PLATFORM/link.ld -o Kernel.bin $linkfiles -z max-page-size=4096 --nmagic
+if [ $? -ne 0 ]
+then
+	echo "${red}\n*** Build Failed! ***${clr}\n"
+	exit -1
+fi
 
 #Clean up
 echo -e "${green}\nCleaning up...${clr}"

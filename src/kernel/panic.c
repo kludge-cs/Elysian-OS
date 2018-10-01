@@ -1,16 +1,19 @@
 #include <console.h>
 #include <screen.h>
+#include <stdarg.h>
 
- __attribute__ ((cdecl))
-void panic (char message[])
+__attribute__((cdecl))
+void panic (char * msg, ...)
 {
+	va_list extra;
 	set_colors(White, Red);
 	puts("\n==============================");
 	puts("-------- KERNEL PANIC --------");
 	puts("==============================");
 	puts("                              ");
 	puts("                              ");
-	puts(message);
+	va_start(extra, msg);
+	vputs(msg, extra);
 	puts("System halted.                ");
 	while (1);
 }

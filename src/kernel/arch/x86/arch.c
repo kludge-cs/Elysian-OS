@@ -1,13 +1,17 @@
-#include <types.h>
-#include <screen.h>
 #include <_gdt.h>
 #include <_idt.h>
 #include <_pic.h>
-#include <time.h>
-#include <console.h>
 #include <_multiboot.h>
+
+#include <types.h>
+#include <time.h>
+#include <vmem.h>
+
 #include <panic.h>
+#include <console.h>
+#include <screen.h>
 #include <strings.h>
+
 
 int arch_init (void)
 {
@@ -19,7 +23,9 @@ int arch_init (void)
 	if (multiboot_magic_check == MBOOT_MAGIC)
 		color_puts("Booted from a multiboot-compliant bootloader\n", Light_Green, Black);
 	else
-		panic("Multiboot magic is not correct!");
+		panic("Multiboot magic is not correct:", multiboot_magic_check);
+
+	mboot_info = (struct mboot_info_s *) VIRT(multiboot_info_ptr);
 
 	puts("Initializing GDT...");
 	install_gdt();

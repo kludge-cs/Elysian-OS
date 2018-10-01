@@ -61,10 +61,10 @@ mboot_header:
 
 section .data
 global multiboot_magic_check
-global multiboot_info_struct
+global multiboot_info_ptr
 global page_dir
 multiboot_magic_check: dd 0
-multiboot_info: dd 0
+multiboot_info_ptr: dd 0
 align 0x1000
 page_dir:
 	dd PD_PRESENT | PD_READWRITE | PD_SIZE
@@ -80,7 +80,7 @@ extern rw_end
 _start:
 	mov [multiboot_magic_check - VIRT_BASE], eax
 
-	mov [multiboot_info - VIRT_BASE], ebx
+	mov [multiboot_info_ptr - VIRT_BASE], ebx
 
 ;actually enable paging and stuff
 	lea eax, [page_dir - VIRT_BASE]

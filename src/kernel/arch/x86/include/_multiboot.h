@@ -60,6 +60,8 @@ struct mboot_info_s
 	uint32 color_info;
 } __attribute__((packed));
 
+struct mboot_info_s * mboot_info;
+
 struct mboot_mmap_s
 {
 	uint32 size;

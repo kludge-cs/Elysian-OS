@@ -1,4 +1,5 @@
 #include <screen.h>
+#include <stdarg.h>
 
 void putch (char ch)
 {
@@ -43,11 +44,30 @@ void putch (char ch)
 	update_curs();
 }
 
-void puts (char *text)
+void vputs (char *base, va_list extra)
 {
-	while(*text)
-		putch(*text++);
+	char *current;
+	
+	while(*base)
+	{
+		if (*base == '%' && *(base-1) != '\\')
+		{
+			current = va_arg(extra, char *);
+			while (*current)
+				putch(*current++);
+			base++;
+		}
+		else
+			putch(*base++);
+	}
 	putch('\n');
+}
+
+inline void puts (char *base, ...)
+{
+	va_list extra;
+	va_start(extra, base);
+	vputs(base, extra);
 }
 
 void screen_clear (void)
