@@ -19,10 +19,21 @@ then
 	exit 0
 fi
 
-asm()
+function asm
 {
 	nasm $1.asm -f elf32 -o $1.o
 	linkfiles="$linkfiles $1.o"
+}
+
+function buildc
+{
+	for file in $1/*.c
+	do
+		object=${file/".c"/}".o"
+		echo "$file -> $object"
+		$CC $file $CCFLAGS -o $object
+		linkfiles="$linkfiles $object"
+	done
 }
 
 
@@ -43,31 +54,13 @@ asm arch/$PLATFORM/blink
 
 #CC commands
 echo -e "${green}\nCompiling base-level files${clr}"
-for file in *.c
-do
-	object=${file/".c"/}".o"
-	echo "$file -> $object"
-	$BINLOC/$CCPLATFORM-elf-gcc $file $CCFLAGS -o $object
-	linkfiles="$linkfiles $object"
-done
+buildc .
 
 echo -e "${green}\nCompiling libk${clr}"
-for file in libk/*.c
-do
-	object=${file/".c"/}".o"
-	echo "$file -> $object"
-	$CC $file $CCFLAGS -o $object
-	linkfiles="$linkfiles $object"
-done
+buildc libk
 
 echo -e "${green}\nCompiling HAL${clr}"
-for file in arch/$PLATFORM/*.c
-do
-	object=${file/".c"/}".o"
-	echo "$file -> $object"
-	$CC $file  $CCFLAGS -o $object
-	linkfiles="$linkfiles $object"
-done
+buildc arch/$PLATFORM
 
 echo -e "${green}\nLinking object files...${clr}"
 $BINLOC/$CCPLATFORM-elf-ld -T arch/$PLATFORM/link.ld -o Kernel.bin $linkfiles -z max-page-size=4096 --nmagic

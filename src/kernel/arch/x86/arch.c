@@ -6,7 +6,8 @@
 #include <time.h>
 #include <console.h>
 #include <_multiboot.h>
-
+#include <panic.h>
+#include <strings.h>
 
 int arch_init (void)
 {
@@ -14,6 +15,11 @@ int arch_init (void)
 	clear_screen();
 
 	color_puts(" Booting Project Mira... (Name will be changed later) \n", Magenta, White);
+
+	if (multiboot_magic_check == MBOOT_MAGIC)
+		color_puts("Booted from a multiboot-compliant bootloader\n", Light_Green, Black);
+	else
+		panic("Multiboot magic is not correct!");
 
 	puts("Initializing GDT...");
 	install_gdt();

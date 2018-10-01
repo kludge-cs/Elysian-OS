@@ -60,8 +60,8 @@ mboot_header:
 	dd 32 ;color depth, ignored in text mode
 
 section .data
-global mboot_magic_check
-global mboot_info_struct
+global multiboot_magic_check
+global multiboot_info_struct
 global page_dir
 multiboot_magic_check: dd 0
 multiboot_info: dd 0
@@ -78,11 +78,9 @@ extern kbegin
 extern ro_end
 extern rw_end
 _start:
-	cmp eax, 0x2BADB002
-	jne hang
+	mov [multiboot_magic_check - VIRT_BASE], eax
 
-	add ebx, VIRT_BASE ;TODO: Check if this is even under the kernel
-	mov dword [multiboot_info], ebx
+	mov [multiboot_info - VIRT_BASE], ebx
 
 ;actually enable paging and stuff
 	lea eax, [page_dir - VIRT_BASE]
