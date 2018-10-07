@@ -1,13 +1,13 @@
 #pragma once
 
-typedef signed char    int8;
-typedef unsigned char  uint8;
+signed   char  typedef int8;
+unsigned char  typedef uint8;
 
-typedef short           int16;
-typedef unsigned short  uint16;
+signed   short   typedef int16;
+unsigned short   typedef uint16;
 
-typedef int       int32;
-typedef unsigned  uint32;
+signed   int   typedef int32;
+unsigned int   typedef uint32;
 
-typedef long long int           int64;
-typedef unsigned long long int  uint64;
+signed   long long int   typedef int64;
+unsigned long long int   typedef uint64;

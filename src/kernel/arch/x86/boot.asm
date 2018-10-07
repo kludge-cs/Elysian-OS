@@ -65,7 +65,7 @@ global multiboot_info_ptr
 global page_dir
 multiboot_magic_check: dd 0
 multiboot_info_ptr: dd 0
-align 0x1000
+align 4096
 page_dir:
 	dd PD_PRESENT | PD_READWRITE | PD_SIZE
 	times (PD_INDEX - 1) dd 0

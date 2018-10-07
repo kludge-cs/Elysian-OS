@@ -5,7 +5,7 @@
  * see http://libc11.org/stdarg/
  */
 
-typedef __builtin_va_list va_list;
+__builtin_va_list typedef va_list;
 
 #define va_start(ap, param) __builtin_va_start((ap), (param))
 
