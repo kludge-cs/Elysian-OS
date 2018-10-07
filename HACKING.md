@@ -23,5 +23,7 @@ if
 
 `#pragma once` is used instead of include guards, it is supported by all major compilers, including TCC, GCC, and Clang.
 
+##### Use tabs, not spaces.
+
 #### What's with the infix typedefs?
 `infix` acts more like a modifier such as `static` than an operator.  It may be placed infix or prefixed, and I prefer infixed since I don't get the types confused (`typedef mytype type` vs `typedef type mytype`, I consider the first to make more sense but it is wrong)
