@@ -1,4 +1,4 @@
-# Project Mira: Currently nothing interesting
+# Project Elysium: Currently nothing interesting
 
 Currently, this is just me trying to make a microkernel.  Check out the long term part of PLANS.md if you want to have a hint at what I plan this to be.
 
