@@ -8,3 +8,6 @@ Instructions for usage:
 3. `./build.sh`
 4. Either use `bochs` or `qemu-system-i386` to boot it
 5. Add something to the code and make a pull request
+
+
+![](https://i.imgur.com/UF0lICU.png)
