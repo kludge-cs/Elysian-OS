@@ -107,7 +107,6 @@ higher_half_start:
 	cli ;we can't do interrupts yet
 
 	call kbegin
-	int 31
 	cli
 hang:
 	hlt
