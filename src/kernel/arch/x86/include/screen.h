@@ -6,7 +6,7 @@
 
 enum color_e
 {
-	Black,
+	Black = 0,
 	Blue,
 	Green,
 	Cyan,
@@ -20,7 +20,7 @@ enum color_e
 	Light_Cyan,
 	Light_Red,
 	Light_Magenta,
-	Light_Brown,
+	Light_Yellow,
 	White
 };
 

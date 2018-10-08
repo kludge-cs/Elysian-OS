@@ -16,7 +16,6 @@
 int arch_init (void)
 {
 	screen_init();
-	clear_screen();
 
 	color_puts(" Booting Project Mira... (Name will be changed later) \n", Magenta, White);
 

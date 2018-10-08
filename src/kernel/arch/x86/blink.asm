@@ -8,18 +8,18 @@ global blink_toggle
 ;Toggle:  XOR with 0x08.
 
 blink_common:
-	;reset index by reading 0x03DA
-	mov bx, 0x03DA
-	in al, dx
+	;go to addriss mode by reading 0x03DA
+	mov dx, 0x03DA
+	in ax, dx
 	
-	;write 0x30 to 0x03C0, setting register index to 0x30
+	;write 0x30 to 0x03C0, setting register index to 0x10
 	mov dx, 0x03C0
-	mov al, 0x30
-	out dx, al
+	mov ax, 0x30 ;PAS=1, addr = 0x10
+	out dx, ax
 
 	; Get register contents (by reading from 0x03C1)
 	inc dx
-	in al, dx
+	in ax, dx
 
 	;Set dx back to 0x03C0
 	dec dx
@@ -29,17 +29,17 @@ blink_common:
 bink_on:
 	call blink_common
 	or al, 0x08 ; enable
-	out dx, al
+	out dx, ax
 	ret
 
 blink_off:
 	call blink_common
 	and al, 0xF7 ;disable
-	out dx, al
+	out dx, ax
 	ret
 
 blink_toggle:
 	call blink_common
-	xor al, 0x08 ;toggle
-	out dx, al
+	xor ax, 0x08 ;toggle
+	out dx, ax
 	ret

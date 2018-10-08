@@ -76,9 +76,10 @@ void set_colors (enum color_e fg, enum color_e bg)
 
 void screen_init (void)
 {
-	set_colors(White, Black);
-	output_pointer = (unsigned short *)0xC00B8000;
 	blink_off();
+	output_pointer = (unsigned short *)0xC00B8000;
+	set_colors(White, Black);
+	clear_screen();
 }
 
 void get_colors (enum color_e * colors)
