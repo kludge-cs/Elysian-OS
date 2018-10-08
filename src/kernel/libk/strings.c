@@ -60,7 +60,7 @@ char * tohex(uint32 val, char * buf)
 	digits = strlen(buf);
 	pos = 0;
 
-	while(pos <= digits)
+	while(pos < digits)
 	{
 		buf[pos] = charset[val % 16];
 		val /= 16;

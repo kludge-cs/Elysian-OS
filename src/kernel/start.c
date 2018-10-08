@@ -5,5 +5,5 @@
 void kbegin ()
 {
 	arch_init();
-	panic("Reason: Nothing to do.        ");
+	/* panic("Reason: Nothing to do.        "); */
 }

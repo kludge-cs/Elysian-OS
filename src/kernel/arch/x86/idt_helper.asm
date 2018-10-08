@@ -82,6 +82,7 @@ isr_noval 29
 isr_noval 30
 isr_noval 31
 
+
 common_wrapper:
 	pusha
 	push ds
@@ -104,4 +105,5 @@ common_wrapper:
 	pop ds
 	popa
 	add esp, 8 ;move back the stack pointer, getting rid of the error code and isr num
+	sti
 	iret

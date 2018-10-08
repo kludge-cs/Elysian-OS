@@ -1,5 +1,4 @@
 #include <types.h>
-#include <_types.h>
 #include <_idt.h>
 #include <strings.h>
 #include <console.h>
@@ -101,6 +100,7 @@ char *exception_msg[] =
 	"EXCEPTION: Reserved - #26",
 	"EXCEPTION: Reserved - #27",
 	"EXCEPTION: Reserved - #28",
+	"EXCEPTION: Reserved - #29",
 	"EXCEPTION: Reserved - #30",
 	"EXCEPTION: Reserved - #31"
 };
@@ -162,10 +162,28 @@ void install_idt (uint16 selector)
 }
 
 __attribute__((__cdecl__))
-void int_handler (struct regs_struct *regs)
+void int_handler (struct regs_s *regs)
 {
-	if (regs->int_num > 31)
-		panic("Unknown exception!");
-	else
+	char buf1[9] = "--------";
+	char buf2[9] = "--------";
+	char buf3[9] = "--------";
+	char buf4[9] = "--------";
+
+	puts("\nEXCEPTION!\nRegisters:");
+	puts("GS:  0x%     FS:  0x%     ES:  0x%     DS:  0x%\n", tohex(regs->gs, buf1), tohex(regs->fs, buf2), tohex(regs->es, buf3), tohex(regs->ds, buf4));
+
+	puts("EDI: 0x%     ESI: 0x%", tohex(regs->edi, buf1), tohex(regs->esi, buf2));
+	puts("EBP: 0x%     ESP: 0x%\n", tohex(regs->ebp, buf1), tohex(regs->esp, buf2));
+
+	puts("EAX: 0x%     EBX: 0x%\nECX: 0x%     EDX: 0x%", tohex(regs->eax, buf1), tohex(regs->ebx, buf2), tohex(regs->ecx, buf3), tohex(regs->edx, buf4));
+
+	puts("EIP: 0x%     ESP: 0x% (user)\n", tohex(regs->eip, buf1), tohex(regs->useresp, buf2));
+	puts("EFLAGS: 0x%  CS:  0x%      SS:  0x%\n", tohex(regs->eflags, buf1), tohex(regs->cs, buf2), tohex(regs->ss, buf3));
+
+	puts("INTERRUPT NUMBER: 0x%", tohex(regs->int_num, buf1));
+	if (regs->int_num < 32)
+	{
 		puts(exception_msg[regs->int_num]);
+		panic("Excpetion!");
+	}
 }

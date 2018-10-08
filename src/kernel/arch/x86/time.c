@@ -39,7 +39,7 @@ void set_interval(uint32 hz)
 	port_out(0x40, num >> 8);      /* Set high byte */
 }
 
-void timer_handler(struct regs_struct *regs)
+void timer_handler(struct regs_s *regs)
 {
 	_ticks++;
 }

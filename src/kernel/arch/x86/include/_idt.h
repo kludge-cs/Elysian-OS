@@ -1,6 +1,13 @@
 #pragma once
 #include <types.h>
-#include <_types.h>
+
+struct regs_s
+{
+	unsigned int gs, fs, es, ds;
+	unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax; /* pushed by 'pusha' */
+	unsigned int int_num, err_code;
+	unsigned int eip, cs, eflags, useresp, ss; /* Auto-pushed */ 
+};
 
 #define IDT_DESC_BITS_16    0x06    /* 00000110 */
 #define IDT_DESC_BITS_32    0x0E    /* 00001110 */
@@ -12,4 +19,4 @@
 void idt_add (uint8 num, uint8 flags, uint16 selector, uint32 offset);
 void install_idt (uint16 selector);
 
-void int_handler (struct regs_struct *regs);
+void int_handler (struct regs_s *regs);

@@ -1,10 +1,7 @@
 #include <types.h>
-
-#include <_pic.h>
 #include <ports.h>
+#include <_pic.h>
 #include <_idt.h>
-
-
 
 void irq_remove(int irq);
 
@@ -28,31 +25,31 @@ extern void irq15();
 extern void pic_init();
 
 /* Array of func pointers */
-static void (*irq_routines[16])(struct regs_struct *regs)  =
+static void (*irq_routines[16])(struct regs_s *regs)  =
 {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
-void irq_add(int irq, void (*handler)(struct regs_struct *regs))
+void irq_add (int irq, void (*handler)(struct regs_s *regs))
 {
 	irq_routines[irq] = handler;
 }
 
-void irq_remove(int irq)
+void irq_remove (int irq)
 {
 	irq_routines[irq] = 0;
 }
 
 void __attribute__((__cdecl__))
-irq_handler_main
-(struct regs_struct *regs)
+irq_handler_main (struct regs_s *regs)
 {
-	void (*handler)(struct regs_struct *regs);
+	void (*handler)(struct regs_s *regs);
 	uint8 inum;
+
 	inum = (uint8) regs->int_num;
 	handler = irq_routines[inum - 32];
-	
+
 	if (handler)
 		handler(regs);
 
@@ -62,7 +59,7 @@ irq_handler_main
 	port_out(0x20, 0x20); /* send EOI to master */
 }
 
-void irq_install(uint16 selector)
+void irq_install (uint16 selector)
 {
 	pic_init();
 	
