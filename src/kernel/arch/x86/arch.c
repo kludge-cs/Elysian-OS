@@ -17,7 +17,7 @@ int arch_init (void)
 {
 	screen_init();
 
-	color_puts(" Booting Elysian... (Name may change later)                                     \n", Magenta, White);
+	color_puts(" Booting Elysium... (Name may change later)                                     \n", Magenta, White);
 
 	if (multiboot_magic_check == MBOOT_MAGIC)
 		color_puts("Booted from a multiboot-compliant bootloader\n", Light_Green, Black);
