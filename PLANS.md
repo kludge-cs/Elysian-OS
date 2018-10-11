@@ -1,6 +1,7 @@
 # Short-term roadmap:
 - [x] Enable paging / virtual memory
-- [ ] Better fault handlers
+- [x] Better fault handlers
+- [ ] SMP support **[IN PROGRESS]**
 - [ ] PMM
 - [ ] VMM
 - [ ] Tasks
