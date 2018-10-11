@@ -23,18 +23,47 @@ struct mp_config_s
 	uint8 reserved;
 } __attribute__ ((packed));
 
+struct mp_floating_s
+{
+	char           sig[4]; /* _MP_ */
+	mp_config_s *  config;
+	uint8          len;
+	uint8          revision;
+	uint8          checksum;
+	uint8          feature[5];
+} __attribute__ ((packed));
+
+enum mp_entry_type_e
+{
+	MP_CPU = 0,
+	MP_BUS,
+	MP_APIC,
+	MP_IRQ,
+	MP_LOCAL_INT
+}
+
+enum mp_irq_type_e
+{
+	MP_INT = 0,
+	MP_NMI,
+	MP_SMI,
+	MP_EXT_INT
+}
+
+
+/* MP Config entries */
 struct mp_processor_s
 {
 	uint8 type;
-	uint8 apic_id;
-	uint8 apic_ver      : 8;
+	uint8 lapic_id;
+	uint8 lapic_version;
 	uint8
 		enabled   : 1,
 		bootstrap : 1,
 		reserved  : 6;
 
-	unsigned cpu_sig       : 32;
-	unsigned cpu_feature   : 32;
+	uint32 cpu_sig;
+	uint32 cpu_feature;
 } __attribute__ ((packed));
 
 struct mp_io_apic_s
@@ -55,7 +84,7 @@ struct mp_bus_s
 	char bus_type[6];
 } __attribute__ ((packed));
 
-struct mp_irq
+struct mp_int /* Local or IO, they're identical structures */
 {
 	uint8 type;
 	uint8 irq_type;
@@ -67,16 +96,6 @@ struct mp_irq
 	uint8 src_bus_id;
 	uint8 src_bus_irq;
 
-	uint8 src_dest_apic_id;
-	uint8 src_dest_apic_pin;
-} __attribute__ ((packed));
-
-struct mp_floating_s
-{
-	char           sig[4]; /* _MP_ */
-	mp_config_s *  config;
-	uint8          len;
-	uint8          revision;
-	uint8          checksum;
-	uint8          feature[5];
+	uint8 dest_apic_id;
+	uint8 dest_apic_pin;
 } __attribute__ ((packed));
