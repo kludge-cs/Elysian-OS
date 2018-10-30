@@ -35,6 +35,8 @@ HUGE_SIZE equ 0x400000
 VIRT_BASE equ 0xC0000000
 PD_INDEX  equ VIRT_BASE >> 22
 
+%define PHYS(x) (x - VIRT_BASE)
+
 section .multiboot
 align 4
 	; Multiboot header format:
@@ -67,10 +69,21 @@ multiboot_magic_check: dd 0
 multiboot_info_ptr: dd 0
 align 4096
 page_dir:
-	dd PD_PRESENT | PD_READWRITE | PD_SIZE
+	.ident:
+		dd 0;PD_PRESENT | PD_READWRITE | PD_SIZE
+
 	times (PD_INDEX - 1) dd 0
-	dd PD_PRESENT | PD_READWRITE | PD_SIZE
-	times (1024 - (PD_INDEX - 1)) dd 0
+
+	.kentry:
+		dd 0;PD_PRESENT | PD_READWRITE | PD_SIZE
+
+	times (1024 - (PD_INDEX - 2)) dd 0
+
+	.recursive:
+		dd 0
+align 4096
+k_tab:
+	times 1024 dd 0
 
 section .text
 global _start
@@ -78,12 +91,31 @@ extern kbegin
 extern ro_end
 extern rw_end
 _start:
-	mov [multiboot_magic_check - VIRT_BASE], eax
+	mov [PHYS(multiboot_magic_check)], eax
+	mov [PHYS(multiboot_info_ptr)], ebx
 
-	mov [multiboot_info_ptr - VIRT_BASE], ebx
+	mov dword [PHYS(page_dir.ident)], (PD_PRESENT | PD_READWRITE | PD_SIZE)
+
+	mov eax, (PHYS(k_tab))
+	or eax, PD_PRESENT | PD_READWRITE
+	mov dword [PHYS(page_dir.kentry)], eax
+
+	mov eax, (PHYS(page_dir))
+	or eax, PD_PRESENT | PD_READWRITE
+	mov dword [PHYS(page_dir.recursive)], eax
+
+	mov eax, PT_PRESENT | PT_READWRITE
+	mov ebx, 0 ;current index
+	mov ecx, (PHYS(k_tab))
+.fill_tab:
+	mov [ecx + ebx * 4], eax
+	add eax, 4096
+	inc ebx
+	cmp ebx, 1024
+	jne .fill_tab
 
 ;actually enable paging and stuff
-	lea eax, [page_dir - VIRT_BASE]
+	lea eax, [PHYS(page_dir)]
 	mov cr3, eax
  
 	mov eax, cr4
@@ -93,7 +125,7 @@ _start:
 	mov eax, cr0
 	or eax, 0x80010000 ;enable paging, WP
 	mov cr0, eax
-	
+
 	lea eax, [higher_half_start]
 	jmp eax
 
