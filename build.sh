@@ -40,7 +40,7 @@ function buildc
 
 
 echo "${green}Building kernel for platform $PLATFORM${clr}"
-cd src/kernel/
+cd kernel/
 
 
 #NASM commands
@@ -79,7 +79,7 @@ rm $linkfiles
 
 #make iso
 echo -e "${green}\nMaking iso...${clr}"
-cd ../..
+cd ..
 cp -p Kernel.bin iso/boot/
 grub-mkrescue -o OS.iso iso &> /dev/null
 
