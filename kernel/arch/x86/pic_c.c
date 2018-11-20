@@ -50,11 +50,12 @@ irq_handler_main (struct regs_s *regs)
 	inum = (uint8) regs->int_num;
 	handler = irq_routines[inum - 32];
 
-	if (handler)
-		handler(regs);
+	if (handler) handler(regs);
 
 	if (inum >= 40)
+	{
 		port_out(0xA0, 0x20); /* send EOI to slave */
+	}
 	
 	port_out(0x20, 0x20); /* send EOI to master */
 }

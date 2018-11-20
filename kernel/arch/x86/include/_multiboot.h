@@ -3,10 +3,11 @@
 
 #define MBOOT_MAGIC 0x2BADB002
 
-extern uint32 multiboot_magic_check;
-extern uint32 multiboot_info_ptr;
+extern uint32 mboot_magic_check;
+extern struct mboot_info_s * mboot_info;
 
-struct mboot_info_s
+struct __attribute__((packed))
+mboot_info_s
 {
 	/* Required */
 	uint32 flags;
@@ -58,14 +59,13 @@ struct mboot_info_s
 	uint32 fb_bpp;
 	uint32 fb_type;
 	uint32 color_info;
-} __attribute__((packed));
+};
 
-struct mboot_info_s * mboot_info;
-
-struct mboot_mmap_s
+struct __attribute__((packed))
+mboot_mmap_s
 {
 	uint32 size;
 	uint64 base_addr; 
 	uint64 len;
 	uint32 type;
-} __attribute__((packed));
+};

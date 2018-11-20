@@ -2,6 +2,7 @@
 #include <time.h>
 #include <ports.h>
 #include <_pic.h>
+#include <console.h>
 
 volatile uint32 _ticks;
 uint32 _freq;
@@ -42,6 +43,7 @@ void set_interval(uint32 hz)
 void timer_handler(struct regs_s *regs)
 {
 	_ticks++;
+	/* puts("Tick"); */
 }
 
 void timer_install(uint32 hz)
@@ -55,5 +57,7 @@ void delay(uint32 amount)
 	uint32 eticks;
 	eticks = amount + _ticks;
 	while(_ticks < eticks)
-		__asm__ volatile ("sti//hlt//cli");
+	{
+		__asm__ volatile ("hlt");
+	}
 }

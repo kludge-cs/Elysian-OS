@@ -74,7 +74,7 @@ fi
 
 #Clean up
 echo -e "${green}\nCleaning up...${clr}"
-mv Kernel.bin ../..
+mv Kernel.bin ..
 rm $linkfiles
 
 #make iso

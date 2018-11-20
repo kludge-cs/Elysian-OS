@@ -89,11 +89,15 @@ void screen_clear (void)
 	update_curs();
 }
 
-void color_puts (char *text, enum color_e fg, enum color_e bg)
+void color_puts (enum color_e fg, enum color_e bg, char *base, ...)
 {
 	enum color_e colors[2];
+
+	va_list extra;
+	va_start(extra, base);
+
 	get_colors(colors);
 	set_colors(fg, bg);
-	puts(text);
+	vputs(base, extra);
 	set_colors(colors[0], colors[1]);
 }

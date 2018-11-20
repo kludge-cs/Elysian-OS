@@ -149,4 +149,4 @@ pic_init:
 	out PIC1_DATA, al
 	out PIC2_DATA, al
 
-	ret ;This is still a function...
+	ret

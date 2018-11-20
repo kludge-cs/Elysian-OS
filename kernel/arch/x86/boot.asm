@@ -69,8 +69,9 @@ extern kbegin
 extern ro_end
 extern rw_end
 _start:
-	mov [PHYS(multiboot_magic_check)], eax
-	mov [PHYS(multiboot_info_ptr)], ebx
+	mov [PHYS(mboot_magic_check)], eax
+	add ebx, VIRT_BASE
+	mov [PHYS(mboot_info)], ebx
 
 	mov dword [PHYS(page_dir.ident)], (PD_PRESENT | PD_READWRITE | PD_SIZE)
 
@@ -145,12 +146,12 @@ flush_end:
 	ret
 
 section .data
-global multiboot_magic_check
-global multiboot_info_ptr
+global mboot_magic_check
+global mboot_info
 global page_dir
 global k_tab
-multiboot_magic_check: dd 0
-multiboot_info_ptr: dd 0
+mboot_magic_check: dd 0
+mboot_info: dd 0
 align 4096
 page_dir:
 	.ident:
