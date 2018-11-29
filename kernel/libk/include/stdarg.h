@@ -1,9 +1,9 @@
 #pragma once
 
 /*
- * Taken from libc11
- * see http://libc11.org/stdarg/
- */
+	Taken from libc11
+	see http://libc11.org/stdarg/
+*/
 
 __builtin_va_list typedef va_list;
 

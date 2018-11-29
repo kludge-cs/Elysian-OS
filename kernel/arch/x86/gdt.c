@@ -29,20 +29,20 @@ extern void flush_gdt();
 
 struct gdt_ptr_struct
 {
-   uint16 limit;               /* The upper 16 bits of all selector limits. */
-   uint32 base;                /* The address of the first gdt_entry_t struct. */
+   uint16_t limit;               /* The upper 16 bits of all selector limits. */
+   uint32_t base;                /* The address of the first gdt_entry_t struct. */
 } __attribute__((packed));
 
 struct gdt_entry
 {
-	uint16 limit_low;
-	uint16 base_low;
+	uint16_t limit_low;
+	uint16_t base_low;
 
-	uint8  base_middle;
-	uint8  access;
-	uint8  highlimit_flags;
+	uint8_t  base_middle;
+	uint8_t  access;
+	uint8_t  highlimit_flags;
 	
-	uint8  base_high; 
+	uint8_t  base_high; 
 } __attribute__((packed));
 
 #define GDT_CODE 0x9A
@@ -55,7 +55,7 @@ struct gdt_entry
 struct gdt_entry gdt[3];
 struct gdt_ptr_struct gdt_pointer;
 
-void gdt_add (int num, uint32 base, uint32 limit, uint8 access, uint8 flags)
+void gdt_add (int num, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags)
 {
 	/* Set base address */
 	gdt[num].base_low    = (base & 0xFFFF);
@@ -75,7 +75,7 @@ void gdt_add (int num, uint32 base, uint32 limit, uint8 access, uint8 flags)
 void install_gdt (void)
 {
 	gdt_pointer.limit = (sizeof(struct gdt_entry) * 3) - 1;
-	gdt_pointer.base = (uint32)&gdt;
+	gdt_pointer.base = (uint32_t)&gdt;
 
 	/* NULL */
 	gdt_add(0, 0, 0, 0, 0);

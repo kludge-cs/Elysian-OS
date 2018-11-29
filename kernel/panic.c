@@ -16,7 +16,7 @@ void panic (char * msg, ...)
 	puts("                              ");
 	puts("                              ");
 	va_start(extra, msg);
-	vputs(msg, extra);
+	vprintf(msg, extra);
 	puts("System halted.                ");
 	while (1);
 }

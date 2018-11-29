@@ -1,4 +1,5 @@
 #include <screen.h>
+#include <string.h>
 #include <stdarg.h>
 
 void putch (char ch)
@@ -44,38 +45,87 @@ void putch (char ch)
 	update_curs();
 }
 
-void vputs (char *base, va_list extra)
+void puts (char * base)
 {
-	char *current;
+	while(*base)
+	{
+		putch(*base++);
+	}
+	putch('\n');
+}
+
+void vprintf (char *base, va_list extra)
+{
+	uint64_t val_x;
+	char * val_s;
+	char * buf = "0000000000000000";
+	const char charset[17] = "0123456789ABCDEF";
+	int32_t pos;
+	uint32_t digits;
+	char * tmp;
 	
 	while(*base)
 	{
 		if (*base == '%' && *(base-1) != '\\')
 		{
-			current = va_arg(extra, char *);
-			while (*current)
-				putch(*current++);
 			base++;
+			switch(*base)
+			{
+				case 's':
+					val_s = va_arg(extra, char *);
+					while (*val_s) putch(*val_s++);
+					break;
+
+				case 'x': case 'y':
+					
+					if (*base == 'x')
+					{
+						val_x = va_arg(extra, uint32_t);
+						tmp = buf + 8;
+						digits = 8;
+					}
+					else
+					{
+						val_x = va_arg(extra, uint64_t);
+						tmp = buf;
+						digits = 16;
+					}
+					pos = digits - 1;
+				
+					while (pos >= 0)
+					{
+						tmp[pos] = charset[val_x % 16];
+						pos--;
+						val_x /= 16;
+					}
+				
+					while (*tmp) putch(*tmp++);
+					break;
+				default:
+					putch('%');
+					putch(*(base+1));
+			}
 		}
-		else
-			putch(*base++);
+		else putch(*base);
+
+		base++;
 	}
 	putch('\n');
 }
 
-inline void puts (char *base, ...)
+void printf (char *base, ...)
 {
 	va_list extra;
 	va_start(extra, base);
-	vputs(base, extra);
+	vprintf(base, extra);
 }
 
 void screen_clear (void)
 {
-	uint8 i;
+	uint8_t i;
 	for (i=0; i <= 24; i++)
 	{
-		uint8 j;
+		uint8_t j;
 		for (j=0; j <= 80; j++)
 		{
 			pos_x = j;
@@ -89,7 +139,7 @@ void screen_clear (void)
 	update_curs();
 }
 
-void color_puts (enum color_e fg, enum color_e bg, char *base, ...)
+void color_printf (enum color_e fg, enum color_e bg, char *base, ...)
 {
 	enum color_e colors[2];
 
@@ -98,6 +148,6 @@ void color_puts (enum color_e fg, enum color_e bg, char *base, ...)
 
 	get_colors(colors);
 	set_colors(fg, bg);
-	vputs(base, extra);
+	vprintf(base, extra);
 	set_colors(colors[0], colors[1]);
 }

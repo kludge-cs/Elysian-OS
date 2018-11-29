@@ -34,4 +34,4 @@ struct pd_entry_s typedef page_dir_t[1024];
 
 extern page_dir_t page_dir;
 
-int8 map_page_large (void * virt, struct pd_entry_s pd_entry);
+int8_t map_page_large (void * virt, struct pd_entry_s pd_entry);

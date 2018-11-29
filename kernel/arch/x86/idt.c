@@ -1,6 +1,6 @@
 #include <types.h>
 #include <_idt.h>
-#include <strings.h>
+#include <string.h>
 #include <console.h>
 #include <screen.h>
 #include <panic.h>
@@ -19,17 +19,17 @@
 
 struct idt_entry
 {
-	uint16 offset_low;
-	uint16 selector;
-	uint8  zero;
-	uint8  type_attr;
-	uint16 offset_high;
+	uint16_t offset_low;
+	uint16_t selector;
+	uint8_t  zero;
+	uint8_t  type_attr;
+	uint16_t offset_high;
 } __attribute__((packed));
 
 struct idt_pointer_struct
 {
-	uint16 limit;
-	uint32 base;
+	uint16_t limit;
+	uint32_t base;
 } __attribute__((packed));
 
 struct idt_entry idt[256];
@@ -105,7 +105,7 @@ char *exception_msg[] =
 	"EXCEPTION: Reserved - #31"
 };
 
-void idt_add (uint8 num, uint8 flags, uint16 selector, uint32 offset)
+void idt_add (uint8_t num, uint8_t flags, uint16_t selector, uint32_t offset)
 {
 	idt[num].offset_low = (offset & 0xFFFF);
 	idt[num].offset_high = (offset >> 16) & 0xFFFF;
@@ -115,14 +115,14 @@ void idt_add (uint8 num, uint8 flags, uint16 selector, uint32 offset)
 }
 
 
-void install_idt (uint16 selector)
+void install_idt (uint16_t selector)
 {
 	idt_pointer.limit = (sizeof(struct idt_entry) * 256) - 1;
-	idt_pointer.base = (uint32)&idt;
+	idt_pointer.base = (uint32_t)&idt;
 
 	memset(&idt, 0, sizeof(struct idt_entry) * 256);
 	
-#define FILL_GATE(n) idt_add(n,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32) &isr##n);
+#define FILL_GATE(n) idt_add(n,  IDT_DESC_PRESENT | IDT_DESC_BITS_32, selector, (uint32_t) &isr##n);
 	FILL_GATE(0)
 	FILL_GATE(1)
 	FILL_GATE(2)
@@ -164,23 +164,18 @@ void install_idt (uint16 selector)
 __attribute__((__cdecl__))
 void int_handler (struct regs_s *regs)
 {
-	char buf1[9] = "--------";
-	char buf2[9] = "--------";
-	char buf3[9] = "--------";
-	char buf4[9] = "--------";
-
 	puts("\nEXCEPTION!\nRegisters:");
-	puts("GS:  0x%     FS:  0x%     ES:  0x%     DS:  0x%\n", tohex(regs->gs, buf1), tohex(regs->fs, buf2), tohex(regs->es, buf3), tohex(regs->ds, buf4));
+	printf("GS:  0x%     FS:  0x%x     ES:  0x%x     DS:  0x%x\n", regs->gs, regs->fs, regs->es, regs->ds);
 
-	puts("EDI: 0x%     ESI: 0x%", tohex(regs->edi, buf1), tohex(regs->esi, buf2));
-	puts("EBP: 0x%     ESP: 0x%\n", tohex(regs->ebp, buf1), tohex(regs->esp, buf2));
+	printf("EDI: 0x%x     ESI: 0x%x",   regs->edi, regs->esi);
+	printf("EBP: 0x%x     ESP: 0x%x\n", regs->ebp, regs->esp);
 
-	puts("EAX: 0x%     EBX: 0x%\nECX: 0x%     EDX: 0x%", tohex(regs->eax, buf1), tohex(regs->ebx, buf2), tohex(regs->ecx, buf3), tohex(regs->edx, buf4));
+	printf("EAX: 0x%x     EBX: 0x%x\nECX: 0x%x     EDX: 0x%x", regs->eax, regs->ebx, regs->ecx, regs->edx);
 
-	puts("EIP: 0x%     ESP: 0x% (user)\n", tohex(regs->eip, buf1), tohex(regs->useresp, buf2));
-	puts("EFLAGS: 0x%  CS:  0x%      SS:  0x%\n", tohex(regs->eflags, buf1), tohex(regs->cs, buf2), tohex(regs->ss, buf3));
+	printf("EIP: 0x%x     ESP: 0x%x (user)\n",        regs->eip, regs->useresp);
+	printf("EFLAGS: 0x%x  CS:  0x%x      SS:  0x%x\n", regs->eflags, regs->cs, regs->ss);
 
-	puts("INTERRUPT NUMBER: 0x%", tohex(regs->int_num, buf1));
+	printf("INTERRUPT NUMBER: 0x%x", regs->int_num);
 	if (regs->int_num < 32)
 	{
 		puts(exception_msg[regs->int_num]);

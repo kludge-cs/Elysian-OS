@@ -4,8 +4,8 @@
 #include <_pic.h>
 #include <console.h>
 
-volatile uint32 _ticks;
-uint32 _freq;
+volatile uint32_t _ticks;
+uint32_t _freq;
 
 /* Command register:
 	+-----------+-----------+------+-----+
@@ -30,11 +30,11 @@ uint32 _freq;
 	00_11_011_0 - Counter 0, LSB then MSB, Square wave generator, 1x 16 bit counter
 */
 
-void set_interval(uint32 hz)
+void set_interval(uint32_t hz)
 {
-	uint32 num;
+	uint32_t num;
 	_freq = hz;
-	num = (uint32)1193180 / hz;
+	num = (uint32_t)1193180 / hz;
 	port_out(0x43, 0x36); /* Set command register: 0x36=0b00110110 */
 	port_out(0x40, num & 0xFF);    /* Set low byte */
 	port_out(0x40, num >> 8);      /* Set high byte */
@@ -46,15 +46,15 @@ void timer_handler(struct regs_s *regs)
 	/* puts("Tick"); */
 }
 
-void timer_install(uint32 hz)
+void timer_install(uint32_t hz)
 {
 	set_interval(hz);
 	irq_add(0, timer_handler);
 }
 
-void delay(uint32 amount)
+void delay(uint32_t amount)
 {
-	uint32 eticks;
+	uint32_t eticks;
 	eticks = amount + _ticks;
 	while(_ticks < eticks)
 	{

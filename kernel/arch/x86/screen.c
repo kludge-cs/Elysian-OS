@@ -1,5 +1,5 @@
 #include <types.h>
-#include <strings.h>
+#include <string.h>
 #include <screen.h>
 #include <ports.h>
 
@@ -71,7 +71,7 @@ void update_scroll (void)
 void set_colors (enum color_e fg, enum color_e bg)
 {
 	/* Top 4 bytes is bg, bottom 4 is fg */
-	attrib = ((uint8)bg << 4) | ((uint8)fg & 0x0F);
+	attrib = ((uint8_t)bg << 4) | ((uint8_t)fg & 0x0F);
 }
 
 void screen_init (void)
