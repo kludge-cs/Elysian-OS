@@ -22,10 +22,13 @@ int arch_init (void)
 	color_printf(Magenta, White, " Booting Elysium... (Name may change later)                                     \n");
 
 	if (mboot_magic_check == MBOOT_MAGIC)
+	{
 		color_printf(Light_Green, Black, "Booted from a multiboot-compliant bootloader\n");
+	}
 	else
+	{
 		panic("Multiboot magic is not correct: %x", (uint32_t) mboot_magic_check);
-	/**/
+	}
 
 	if ((unsigned int)mboot_info > VIRT(0x100000))
 	{
@@ -37,43 +40,37 @@ int arch_init (void)
 		panic("No multiboot memory map available");
 	}
 
-
-	printf("Multiboot info:");
+	/* BEGIN print memory map */	
+	printf("Multiboot memory map:");
 	set_colors(Light_Grey, Black);
-	printf("Lower conventional memory: 0x%x KB",   (uint32_t) mboot_info->mem_lower);
-	printf("Upper conventional memory: 0x%x KB\n", (uint32_t) mboot_info->mem_upper);
 
-	color_printf(White, Black, "Memory map:");
 	mboot_info->mmap_addr += VIRT_BASE;
-	mmap = (struct mboot_mmap_s *) mboot_info->mmap_addr;
 
 	puts("  Addr                 Length               Type");
 
-	for
-		(
-			;
-			(uint32_t) mmap < mboot_info->mmap_addr + mboot_info->mmap_len;
-			mmap = mmap + mmap->size + sizeof(mmap->size)
+	for (
+			mmap = (struct mboot_mmap_s *) mboot_info->mmap_addr;
+			(uint32_t) mmap < mboot_info->mmap_len + mboot_info->mmap_addr;
+			mmap = (struct mboot_mmap_s *) ( (uint32_t) mmap + mmap->size + sizeof(mmap->size) )
 		)
 	{
 		printf
 		(
-			"| 0x%y | 0x%y | 0x%x |",
+			"| 0x%y | 0x%y | 0x%x",
 			(uint64_t) mmap->addr,
 			(uint64_t) mmap->len,
 			(uint32_t) mmap->type
 		);
-
-		putch('\n');
 	}
+
+	putch('\n');
+	/* END print memory map */
 
 	set_colors(White, Black);
 
-	puts("Initializing GDT...");
+	puts("Initializing Descriptors...");
 	install_gdt();
 	color_printf(Light_Green, Black, "GDT initialized!\n");
-
-	puts("Initializing IDT...");
 	install_idt(0x08);
 	color_printf(Light_Green, Black, "IDT initialized!\n");
 

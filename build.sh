@@ -55,7 +55,7 @@ asm arch/$PLATFORM/blink
 
 
 #CC commands
-echo -e "${green}\nCompiling base-level files${clr}"
+echo -e "${green}\nCompiling base files${clr}"
 buildc .
 
 echo -e "${green}\nCompiling libk${clr}"
