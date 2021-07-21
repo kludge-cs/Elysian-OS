@@ -136,7 +136,7 @@ impl VGATextDriver {
 			self.clear_line(self.row);
 			return;
 		}
-		return self.row += 1;
+		self.row += 1;
 	}
 
 	fn shift_up(&mut self) {
@@ -187,11 +187,13 @@ impl VGATextDriver {
 
 impl fmt::Write for VGATextDriver {
 	fn write_str(&mut self, s: &str) -> fmt::Result {
-		Ok(self.puts(s))
+		self.puts(s);
+		Ok(())
 	}
 
 	fn write_char(&mut self, c: char) -> fmt::Result {
-		Ok(self.putch(c as u8))
+		self.putch(c as u8);
+		Ok(())
 	}
 }
 
