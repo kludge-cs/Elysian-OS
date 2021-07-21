@@ -6,6 +6,7 @@ use core::panic::PanicInfo;
 fn panic(info: &PanicInfo) -> ! {
 	VGA_TERM.lock().set_fmt(*PANIC_FMT);
 
+	// TODO: add arch interface and x86 using kernel/arch/x86
 	#[cfg(target_arch = "x86")]
 	unsafe {
 		asm!("cli");
@@ -17,5 +18,8 @@ fn panic(info: &PanicInfo) -> ! {
 	vprintf!("\n\n");
 	vprintf!("{}", info);
 	vprintf!("\n\nSystem halted.");
-	loop {}
+
+	loop {
+		x86_64::instructions::hlt();
+	}
 }

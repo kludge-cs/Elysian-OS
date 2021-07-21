@@ -18,6 +18,5 @@ pub extern "C" fn _start() -> ! {
 
 	// TODO: follow arch_init procedure
 
-	#[allow(clippy::empty_loop)]
-	loop {}
+	panic!("Nothing left to do.");
 }
