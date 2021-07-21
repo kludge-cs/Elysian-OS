@@ -1,7 +1,2 @@
-*.bin
-*.o
-bochsrc
-out.bochs
-*.iso
-ostree
-.*
+target
+kernel

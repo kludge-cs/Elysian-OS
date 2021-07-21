@@ -1,14 +1,23 @@
 # Code modification and contribution guide
 
+NOTE: This will later be updated to reflect the KCS standard
+contribution guidelines. This document is currently a copy of the
+original.
+
 ## Contribution
+
 Follow the style guide, make sure it builds, and submit a pull request.
 
 ## Manners
+
 Don't directly insult people, attack their work instead.
 
 ## Style
-C89 is used, with the exception of the type `long long`.
-Next-line bracing is used everywhere, if there is an excessively long line with parenthesis, it is split as follows:
+
+C89 is used, with the exception of the type `long long`. Next-line
+bracing is used everywhere, if there is an excessively long line with
+parenthesis, it is split as follows:
+
 ```
 if
 	(
@@ -21,9 +30,11 @@ if
 }
 ```
 
-`#pragma once` is used instead of include guards, it is supported by all major compilers, including TCC, GCC, and Clang.
+`#pragma once` is used instead of include guards, it is supported by
+all major compilers, including TCC, GCC, and Clang.
 
 ##### Use tabs, not spaces.
 
 #### What's with the infix typedefs?
+
 `infix` acts more like a modifier such as `static` than an operator.  It may be placed infix or prefixed, and I prefer infixed since I don't get the types confused (`typedef mytype type` vs `typedef type mytype`, I consider the first to make more sense but it is wrong)
