@@ -5,6 +5,7 @@
 #![test_runner(test::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
+mod arch;
 mod io;
 #[cfg(not(test))]
 mod panic;
